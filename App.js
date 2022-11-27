@@ -1,21 +1,32 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-
-export default function App() {
+import react from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { StatusBar } from 'react-native';
+import {createStackNavigator} from '@react-navigation/stack';
+import HomeScreen from './src/views/screens/HomeScreen';
+import StartScreen from './src/views/screens/StartScreen';
+import COLORS from './src/consts/colors';
+import DetailsScreen from './src/views/screens/DetailsScreen';
+import LoginScreen from './src/views/screens/LoginScreen';
+import RegisterScreen from './src/views/screens/ResgisterScreen';
+import UserDashboard from './src/views/screens/UserDashboard';
+import ResetPassword from './src/views/screens/ResetPassword';
+const Stack = createStackNavigator();
+const App = () => {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <StatusBar backgroundColor={COLORS.white} barStyle="dark-content" />
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="DetailsScreen" component={DetailsScreen} />
+        <Stack.Screen name="StartScreen" component={StartScreen} />
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+        <Stack.Screen name="UserDashboard" component={UserDashboard} />
+        <Stack.Screen name="ResetPassword" component={ResetPassword} />
+      </Stack.Navigator>
+    </NavigationContainer>
+    
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;

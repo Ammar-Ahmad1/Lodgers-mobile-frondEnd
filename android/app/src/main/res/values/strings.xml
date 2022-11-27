@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">lodgers-Mobile</string>
+    <string name="facebook_app_id">999768544313588</string>
+    <string name="facebook_client_token">7c81a7b93c644ba2e8a86db4d37e3693</string>
 </resources>
