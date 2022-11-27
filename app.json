@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "lodgers-Mobile",
+    "slug": "lodgers-Mobile",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "lodgers-Mobile"
+}
