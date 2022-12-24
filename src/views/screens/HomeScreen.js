@@ -1,6 +1,6 @@
 import React,{useState, useEffect,useRef} from 'react';
 import Axios from "axios";
-
+import MapView from 'react-native-maps';
 import {
   Dimensions,
   FlatList,
@@ -15,6 +15,7 @@ import {
   Animated,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import EIcon from 'react-native-vector-icons/EvilIcons';
 import COLORS from '../../consts/colors';
 // import hotels from '../../consts/hotels';
 //import {GET_HOTEL} from '../../graphql/queries/hotelQueries';
@@ -34,7 +35,7 @@ const HomeScreen = ({navigation}) => {
   const CategoryList = ({navigation}) => {
     
     const HostelList = async () => {
-      const hostelss = await Axios.get("http://10.0.2.2:5000/get-hostels", {
+      const hostelss = await Axios.get("http://192.168.1.6:5000/get-hostels", {
         // headers: {
         //   Authorization: "Bearer " + localStorage.getItem("auth_token"),
         // },
@@ -194,9 +195,13 @@ const HomeScreen = ({navigation}) => {
             placeholder="Search"
             style={{fontSize: 20, paddingLeft: 10}}
           />
+          <EIcon name="location"       style={{
+        flexDirection: "row",
+        justifyContent: "flex-end"
+      }} size={38} color={COLORS.grey}
+          onPress={() => navigation.navigate('Maps')}
+        />
         </View>
-
-
         <CategoryList />
         <View>
           <Animated.FlatList
@@ -244,11 +249,20 @@ const HomeScreen = ({navigation}) => {
           renderItem={({item}) => <TopHotelCard hotel={item} />}
         />
       </ScrollView>
-    </SafeAreaView>
+    
+
+        </SafeAreaView>
   );
 };
 
 const style = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  map: {
+    width: '50%',
+    height: '50%',
+  },
   header: {
     marginTop: 20,
     flexDirection: 'row',
