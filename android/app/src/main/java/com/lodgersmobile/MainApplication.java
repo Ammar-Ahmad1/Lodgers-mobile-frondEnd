@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import androidx.annotation.NonNull;
 
+import com.airbnb.android.react.maps.MapsPackage;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
@@ -72,6 +73,13 @@ public class MainApplication extends Application implements ReactApplication {
     super.onConfigurationChanged(newConfig);
     ApplicationLifecycleDispatcher.onConfigurationChanged(this, newConfig);
   }
+  @Override
+  protected List<ReactPackage> getPackages() {
+   return Arrays.<ReactPackage>asList(
+      new MainReactPackage(),
+      new MapsPackage()
+   );
+  }
 
   /**
    * Loads Flipper in React Native templates. Call this in the onCreate method with something like
@@ -103,4 +111,5 @@ public class MainApplication extends Application implements ReactApplication {
       }
     }
   }
+
 }
