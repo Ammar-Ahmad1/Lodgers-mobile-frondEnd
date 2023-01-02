@@ -50,6 +50,12 @@ export default function StartScreen({ navigation }) {
       >
         Sign Up
       </Button>
+      <Button
+        mode="outlined"
+        onPress={() => navigation.navigate('RegisterOwnerScreen')}
+      >
+        Sign Up As Owner
+      </Button>
 
       <Button
         mode="outlined"

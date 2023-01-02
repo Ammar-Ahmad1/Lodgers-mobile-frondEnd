@@ -191,7 +191,7 @@ const HomeScreen = ({navigation}) => {
           </View>
         </View>
         <Icon name="person-outline" size={38} color={COLORS.grey}
-          onPress={() => navigation.navigate('StartScreen')}
+          onPress={() => navigation.navigate('editOwner')}
         />
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>

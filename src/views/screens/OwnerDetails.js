@@ -13,14 +13,16 @@ import {
   AsyncStorage
 
 } from 'react-native';
+import Button from '../../components/Button';
 import COLORS from '../../consts/colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import EIcon from 'react-native-vector-icons/Entypo';
 import Axios from 'axios';
 const {width} = Dimensions.get('screen');
 const cardWidth = width / 1.8;
-const DetailsScreen = ({navigation, route}) => {
+const OwnerDetails = ({navigation, route}) => {
   const item = route.params;
+  console.log("hello "+item);
 const [rooms,setRooms] = useState([ ])
 const scrollX = React.useRef(new Animated.Value(0)).current;
 const [selectedCategoryIndex, setSelectedCategoryIndex] = React.useState(0);
@@ -212,11 +214,15 @@ const Card = ({hotel, index}) => {
             snapToInterval={cardWidth}
           />
         </View>
-        <View style={style.btn}>
-          <Text style={{color: COLORS.white, fontSize: 18, fontWeight: 'bold'}}>
-            Book Now
-          </Text>
-        </View>
+        {/* <View style={style.btn}> */}
+          <Button
+             mode="contained"
+            onPress={() => navigation.navigate('AddRoom', item)}
+            // style={{backgroundColor: COLORS.primary}}
+            >
+            Add Room
+            </Button> 
+        {/* </View> */}
       </View>
     </ScrollView>
   );
@@ -313,4 +319,4 @@ const style = StyleSheet.create({
   },
 });
 
-export default DetailsScreen;
+export default OwnerDetails;
