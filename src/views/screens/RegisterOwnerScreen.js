@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { TouchableOpacity, StyleSheet, View, AsyncStorage } from 'react-native'
+import { View, StyleSheet, TouchableOpacity} from 'react-native'
 import { Text } from 'react-native-paper'
 import Background from '../../components/Background'
 import Logo from '../../components/Logo'
@@ -10,60 +10,68 @@ import BackButton from '../../components/BackButton'
 import { theme } from '../../core/theme'
 import { emailValidator } from '../../helpers/emailValidator'
 import { passwordValidator } from '../../helpers/passwordValidator'
+import { nameValidator } from '../../helpers/nameValidator'
 
+export default function RegisterOwnerScreen({ navigation }) {
+  const [name, setName] = useState({ value: '', error: '' })
+  const [email, setEmail] = useState({ value: '', error: '' })
+  const [password, setPassword] = useState({ value: '', error: '' })
 
-export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState({ value: "", error: "" })
-  const [password, setPassword] = useState({ value: "", error: "" })
-
-  const onLoginPressed = () => {
+  const onSignUpPressed = () => {
+    const nameError = nameValidator(name.value)
     const emailError = emailValidator(email.value)
     const passwordError = passwordValidator(password.value)
-    if (emailError || passwordError) {
+    if (emailError || passwordError || nameError) {
+      setName({ ...name, error: nameError })
       setEmail({ ...email, error: emailError })
       setPassword({ ...password, error: passwordError })
       return
     }
-    fetch("http://192.168.1.13:5000/login", {
+    //sign up api 
+    fetch("http://192.168.1.13:5000/register-user", {
       method: "post",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email,
-        password,
+        name:name.value,
+        email: email.value,
+        password: password.value,
+        role: "owner",
+
       }),
     })
       .then((res) => res.json())
       .then((result) => {
-        // console.log(result);
-        if (result.errors) {
-          alert(result.errors);
-        } else {
-          //save token in async storage
-          AsyncStorage.setItem("jwt", result.token);
-          AsyncStorage.setItem("user", JSON.stringify(result.userInfo ));
-          alert("Login Successfull");
-          console.log(result.userInfo);
-          if(result.userInfo.role=== "owner"){
-            navigation.navigate('OwnerHome');
-          }
-          else if(result.userInfo.role === "user"){
-            navigation.navigate('UserDashboard');
-          }
-        }
+        console.log(result)
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'OwnerHome' }],
+        })
       }
       )
       .catch((err) => {
         console.log(err);
-      });
+      }
+      );
+
+
+
   }
 
   return (
     <Background>
       <BackButton goBack={navigation.goBack} />
       <Logo />
-      <Header>Welcome back.</Header>
+      <Header>Create Account</Header>
+      <TextInput
+        label="Name"
+        returnKeyType="next"
+        value={name.value}
+        onChangeText={(text) => setName({ value: text, error: '' })}
+        error={!!name.error}
+        errorText={name.error}
+      />
       <TextInput
         label="Email"
         returnKeyType="next"
@@ -85,20 +93,17 @@ export default function LoginScreen({ navigation }) {
         errorText={password.error}
         secureTextEntry
       />
-      <View style={styles.forgotPassword}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('ResetPassword')}
-        >
-          <Text style={styles.forgot}>Forgot your password?</Text>
-        </TouchableOpacity>
-      </View>
-      <Button mode="contained" onPress={onLoginPressed}>
-        Login
+      <Button
+        mode="contained"
+        onPress={onSignUpPressed}
+        style={{ marginTop: 24 }}
+      >
+        Sign Up
       </Button>
       <View style={styles.row}>
-        <Text>Don’t have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.replace('RegisterScreen')}>
-          <Text style={styles.link}>Sign up</Text>
+        <Text>Already have an account? </Text>
+        <TouchableOpacity onPress={() => navigation.replace('LoginScreen')}>
+          <Text style={styles.link}>Login</Text>
         </TouchableOpacity>
       </View>
     </Background>
@@ -106,21 +111,13 @@ export default function LoginScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  forgotPassword: {
-    width: '100%',
-    alignItems: 'flex-end',
-    marginBottom: 24,
-  },
   row: {
     flexDirection: 'row',
     marginTop: 4,
-  },
-  forgot: {
-    fontSize: 13,
-    color: theme.colors.secondary,
   },
   link: {
     fontWeight: 'bold',
     color: theme.colors.primary,
   },
 })
+

@@ -13,10 +13,13 @@ import {
   View,
   Image,
   Animated,
+  AsyncStorage,
 } from 'react-native';
+import Button from '../../components/Button';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import EIcon from 'react-native-vector-icons/EvilIcons';
 import COLORS from '../../consts/colors';
+
 // import hotels from '../../consts/hotels';
 //import {GET_HOTEL} from '../../graphql/queries/hotelQueries';
 const {width} = Dimensions.get('screen');
@@ -24,62 +27,34 @@ const cardWidth = width / 1.8;
 
 
 
-const HomeScreen = ({navigation}) => {
-
+const OwnerHomeScreen = ({navigation}) => {
   const categories = ['All', 'Popular', 'Top Rated', 'Featured', 'Luxury'];
   const [selectedCategoryIndex, setSelectedCategoryIndex] = React.useState(0);
   const [activeCardIndex, setActiveCardIndex] = React.useState(0);
   const scrollX = React.useRef(new Animated.Value(0)).current;
   const [hostel, setHostel] = useState([]);
-
-  const CategoryList = ({navigation}) => {
-    
-    const HostelList = async () => {
-      const hostelss = await Axios.get("http://192.168.1.13:5000/get-hostels", {
-        // headers: {
-        //   Authorization: "Bearer " + localStorage.getItem("auth_token"),
-        // },
-      });
-      setHostel(hostelss.data.hostels);
-     // console.log(hostel);
-    };
-    useEffect(() => {
-     HostelList();
-    }, [0]);
-    return (
-      <View style={style.categoryListContainer}>
-        {categories.map((item, index) => (
-          <TouchableOpacity
-            key={index}
-            activeOpacity={0.8}
-            onPress={() => setSelectedCategoryIndex(index)}>
-            <View>
-              <Text
-                style={{
-                  ...style.categoryListText,
-                  color:
-                    selectedCategoryIndex == index
-                      ? COLORS.primary
-                      : COLORS.grey,
-                }}>
-                {item}
-              </Text>
-              {selectedCategoryIndex == index && (
-                <View
-                  style={{
-                    height: 3,
-                    width: 30,
-                    backgroundColor: COLORS.primary,
-                    marginTop: 2,
-                  }}
-                />
-              )}
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
-    );
+  const [ownerid, setOwnerid] = useState([]);
+    const [token,setToken] = useState([]);
+    const [user,setUser] = useState([]);
+    const setMaalik = async () => {
+      AsyncStorage.getItem("user").then((user) => {
+        let parsed = JSON.parse(user);
+        setUser(parsed);
+        setOwnerid(parsed._id);
+        console.log(parsed._id);
+    });
   };
+  const HostelList = async () => {    
+    const hostelss = await Axios.get(`http://192.168.1.13:5000/get-hostels/${ownerid}`);
+    setHostel(hostelss.data.hostels);
+    console.log(hostelss.data.hostels);
+};
+useEffect(() => {
+
+ setMaalik();
+  HostelList();
+}, []);
+
   const Card = ({hotel, index}) => {
     const inputRange = [
       (index - 1) * cardWidth,
@@ -94,11 +69,14 @@ const HomeScreen = ({navigation}) => {
       inputRange,
       outputRange: [0.8, 1, 0.8],
     });
+
     return (
+      
+
       <TouchableOpacity
         disabled={activeCardIndex != index}
         activeOpacity={1}
-        onPress={() => navigation.navigate('DetailsScreen', hotel)}>
+        onPress={() => navigation.navigate('OwnerDetails', hotel)}>
         <Animated.View style={{...style.card, transform: [{scale}]}}>
           <Animated.View style={{...style.cardOverLay, opacity}} />
           <View style={style.priceTag}>
@@ -141,117 +119,68 @@ const HomeScreen = ({navigation}) => {
       </TouchableOpacity>
     );
   };
-  const TopHotelCard = ({hotel}) => {
-    return (
-      <View style={style.topHotelCard}>
-        <View
-          style={{
-            position: 'absolute',
-            top: 5,
-            right: 5,
-            zIndex: 1,
-            flexDirection: 'row',
-          }}>
-          <Icon name="star" size={15} color={COLORS.orange} />
-          <Text style={{color: COLORS.white, fontWeight: 'bold', fontSize: 15}}>
-            5.0
-          </Text>
-        </View>
-        <Image style={style.topHotelCardImage} source={{uri:hotel.image}} />
-        <View style={{paddingVertical: 5, paddingHorizontal: 10}}>
-          <Text style={{fontSize: 10, fontWeight: 'bold'}}>{hotel.name}</Text>
-          <Text style={{fontSize: 7, fontWeight: 'bold', color: COLORS.grey}}>
-            {hotel.location}
-          </Text>
-        </View>
-      </View>
-    );
-  };
   const ref = useRef(null);
   const [searchText, setSearchText] = useState("");
   return (
+
     <SafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
+
       <View style={style.header}>
+
         <View style={{paddingBottom: 15}}>
           <Text style={{fontSize: 30, fontWeight: 'bold'}}>
-            Find your hostel
+            Your Hostels
           </Text>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={{fontSize: 30, fontWeight: 'bold'}}>in </Text>
-            <Text
-              style={{fontSize: 30, fontWeight: 'bold', color: COLORS.primary}}>
-              Pakistan
-            </Text>
-          </View>
         </View>
         <Icon name="person-outline" size={38} color={COLORS.grey}
-          onPress={() => navigation.navigate('StartScreen')}
+          onPress={() => navigation.navigate('editOwner')}
         />
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={style.searchInputContainer}>
-          <Icon name="search" size={30} style={{marginLeft: 20}} />
-          <TextInput
-            placeholder="Search"
-            style={{fontSize: 20, paddingLeft: 10}}
-          />
-          <EIcon name="location"       style={{
-        flexDirection: "row",
-        justifyContent: "flex-end"
-      }} size={38} color={COLORS.grey}
-          onPress={() => navigation.navigate('Maps')}
-        />
-        </View>
-        <CategoryList />
-        <View>
-          <Animated.FlatList
-            onMomentumScrollEnd={(e) => {
-              setActiveCardIndex(
-                Math.round(e.nativeEvent.contentOffset.x / cardWidth),
-              );
-            }}
-            onScroll={Animated.event(
-              [{nativeEvent: {contentOffset: {x: scrollX}}}],
-              {useNativeDriver: true},
-            )}
-            horizontal
-            data={hostel}
-            contentContainerStyle={{
-              paddingVertical: 30,
-              paddingLeft: 20,
-              paddingRight: cardWidth / 2 - 40,
-            }}
-            showsHorizontalScrollIndicator={false}
-            renderItem={({item, index}) => <Card hotel={item} index={index} />}
-            snapToInterval={cardWidth}
-          />
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginHorizontal: 20,
-          }}>
-          <Text style={{fontWeight: 'bold', color: COLORS.grey}}>
-            Top hotels
-          </Text>
-          <Text style={{color: COLORS.grey}}>Show all</Text>
-        </View>
-        <FlatList
-          data={hostel}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingLeft: 20,
-            marginTop: 20,
-            paddingBottom: 30,
-          }}
-          renderItem={({item}) => <TopHotelCard hotel={item} />}
-        />
-      </ScrollView>
-    
-
-        </SafeAreaView>
+        <ScrollView showsVerticalScrollIndicator={true}>
+          <View style={style.searchInputContainer}>
+            <Icon name="search" size={30} style={{marginLeft: 20}} />
+            <TextInput
+              placeholder="Search"
+              style={{fontSize: 20, paddingLeft: 10}}
+            />
+          </View>
+          <View>
+            <Animated.FlatList
+              onMomentumScrollEnd={(e) => {
+                setActiveCardIndex(
+                  Math.round(e.nativeEvent.contentOffset.x / cardWidth),
+                );
+              }}
+              onScroll={Animated.event(
+                [{nativeEvent: {contentOffset: {x: scrollX}}}],
+                {useNativeDriver: true},
+              )}
+              horizontal
+              data={hostel}
+              contentContainerStyle={{
+                paddingVertical: 30,
+                paddingLeft: 20,
+                paddingRight: cardWidth / 2 - 40,
+              }}
+              showsHorizontalScrollIndicator={true}
+              renderItem={({item, index}) => <Card hotel={item} index={index} />}
+              snapToInterval={cardWidth}
+            />
+          </View>
+        </ScrollView>
+        <Button 
+          mode="outlined"
+          onPress={() => navigation.navigate('bookingScreen', ownerid)}
+        >
+          See Bookings
+        </Button>
+        <Button
+          mode="contained"
+          onPress={() => navigation.navigate('HostelForm', ownerid)}
+        >
+          Add New Hostel
+        </Button>
+      </SafeAreaView>
   );
 };
 
@@ -348,4 +277,4 @@ const style = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default OwnerHomeScreen;
