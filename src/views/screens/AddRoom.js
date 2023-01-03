@@ -37,7 +37,7 @@ const AddRoom = ({navigation, route}) => {
         })
         formData.append('hostel', hostel._id)
         console.log(formData)
-        fetch("http://192.168.1.13:5000/add-rooms", {
+        fetch("http://10.0.2.2:5000/add-rooms", {
             body: formData,
             method: "post",
             headers: {

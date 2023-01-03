@@ -14,45 +14,46 @@ import { nameValidator } from '../../helpers/nameValidator'
 import EIcon from 'react-native-vector-icons/EvilIcons';
 import * as ImagePicker from 'expo-image-picker';
 import Axios from 'axios';
+import * as Location from 'expo-location';
 
 export default function RegisterScreen({navigation, route}) {
   const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
     const [name, setName] = useState({ value: '', error: '' })
     const [description, setDescription] = useState({ value: '', error: '' })
     const [location, setLocation] = useState({ value: '', error: '' })
+   const [longitude, setLongitude] = useState({ value: '', error: '' })
+    const [latitude, setLatitude] = useState({ value: '', error: '' })
    // const [owner, setOwner] = useState()
   const owner=route.params
   console.log(owner)
     const [email, setEmail] = useState({ value: '', error: '' })
     const [password, setPassword] = useState({ value: '', error: '' })
-//    const getAddress = () =>{ 
-//     if (hasLocationPermission) {
-//         Geolocation.getCurrentPosition(
-//         (position) => {
-//         console.log(position);
-//         },
-//         (error) => {
-//         // See error code charts below.
-//         console.log(error.code, error.message);
-//         },
-//         { enableHighAccuracy: true, timeout: 15000, maximumAge:          10000 }
-//         );
-//         }
 
-//     }
-const [image, setImage] = useState(null);
-// const OwnerID = () => {
-//   AsyncStorage.getItem('user').then((user) => {
-//     setOwner(user._id)
-//     console.log(user._id)
-//   })
-// }
 
+   const getAddress = async() =>{ 
+    let location = await Location.getCurrentPositionAsync({});
+    console.log(location.coords.latitude)
+   setLatitude(location.coords.latitude)
+    console.log(location.coords.longitude)
+    setLongitude(location.coords.longitude)
+    }
+const [image, setImage] = useState(null);  
 useEffect(() => {
   (async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     setHasGalleryPermission(status === 'granted');
-  })()
+  })();
+
+  (async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if(status === 'granted'){
+      console.log('location permission granted')
+    }else{
+      console.log('location permission not granted')
+    } 
+  })();
+
+  
 },  []);
 
 const pickImage = async () => {
@@ -78,7 +79,8 @@ const pickImage = async () => {
     const formData = new FormData();
     formData.append('name', name.value);
     formData.append('description', description.value);
-    formData.append('location', "islamabad");
+    formData.append('longitude', longitude);
+    formData.append('latitude', latitude);
     formData.append('owner', owner);
     formData.append('image', {
       uri: image,
@@ -86,7 +88,7 @@ const pickImage = async () => {
       name: 'image.jpg',
     });
       console.log(formData)
-      fetch("http://192.168.1.13:5000/add-hostel", {
+      fetch("http://10.0.2.2:5000/add-hostel", {
         body: formData,
         method: "post",
         headers: {
@@ -146,13 +148,13 @@ const pickImage = async () => {
       Select Picture
     </Button>
    
-      {/* <Button
-        mode="contained"
-        //onPress={getAddress}
+      <Button
+        mode="outlined"
+       onPress={getAddress}
         style={{ marginTop: 24 }}
         >
             getCurrentPosition
-        </Button> */}
+        </Button>
       <Button
         mode="contained"
         onPress={onSignUpPressed}

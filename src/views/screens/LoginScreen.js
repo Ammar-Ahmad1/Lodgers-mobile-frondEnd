@@ -24,7 +24,7 @@ export default function LoginScreen({ navigation }) {
       setPassword({ ...password, error: passwordError })
       return
     }
-    fetch("http://192.168.1.13:5000/login", {
+    fetch("http://10.0.2.2:5000/login", {
       method: "post",
       headers: {
         "Content-Type": "application/json",

@@ -36,7 +36,7 @@ const [activeCardIndex, setActiveCardIndex] = React.useState(0);
 // };
 
 const roomList = async () => {
-  const roommss = await Axios.get(`http://192.168.1.13:5000/get-rooms/${item._id}`, {
+  const roommss = await Axios.get(`http://10.0.2.2:5000/get-rooms/${item._id}`, {
   });
   setRooms(roommss.data.room);
   console.log(rooms);
@@ -213,7 +213,11 @@ const Card = ({hotel, index}) => {
           />
         </View>
         <View style={style.btn}>
-          <Text style={{color: COLORS.white, fontSize: 18, fontWeight: 'bold'}}>
+          <Text style={{color: COLORS.white, fontSize: 18, fontWeight: 'bold'}}
+          //on press booking
+          onPress={() => navigation.navigate('bookingScreen')}
+          >
+
             Book Now
           </Text>
         </View>

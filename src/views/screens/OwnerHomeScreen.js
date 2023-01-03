@@ -36,6 +36,7 @@ const OwnerHomeScreen = ({navigation}) => {
   const [ownerid, setOwnerid] = useState([]);
     const [token,setToken] = useState([]);
     const [user,setUser] = useState([]);
+    const [searchText, setSearchText] = useState("");
     const setMaalik = async () => {
       AsyncStorage.getItem("user").then((user) => {
         let parsed = JSON.parse(user);
@@ -44,8 +45,27 @@ const OwnerHomeScreen = ({navigation}) => {
         console.log(parsed._id);
     });
   };
+  const SearchFilterFunction = (text) => {
+    //passing the inserted text in textinput
+    const newData = hostel.filter(function (item) {
+      //applying filter for the inserted text in search bar
+      const itemData = item.name
+        ? item.name.toUpperCase()
+        : ''.toUpperCase();
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    setHostel(newData);
+    setSearchText(text);
+    // get full list
+    if (text == '') {
+      HostelList();
+    }
+  
+  };
+
   const HostelList = async () => {    
-    const hostelss = await Axios.get(`http://192.168.1.13:5000/get-hostels/${ownerid}`);
+    const hostelss = await Axios.get(`http://10.0.2.2:5000/get-hostels/${ownerid}`);
     setHostel(hostelss.data.hostels);
     console.log(hostelss.data.hostels);
 };
@@ -120,7 +140,6 @@ useEffect(() => {
     );
   };
   const ref = useRef(null);
-  const [searchText, setSearchText] = useState("");
   return (
 
     <SafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
@@ -136,14 +155,19 @@ useEffect(() => {
           onPress={() => navigation.navigate('editOwner')}
         />
       </View>
-        <ScrollView showsVerticalScrollIndicator={true}>
-          <View style={style.searchInputContainer}>
+      <ScrollView showsVerticalScrollIndicator={true}>
+      <View style={style.searchInputContainer}>
             <Icon name="search" size={30} style={{marginLeft: 20}} />
             <TextInput
               placeholder="Search"
               style={{fontSize: 20, paddingLeft: 10}}
+              onChangeText={(text) => SearchFilterFunction(text)}
+              value={searchText}
+
             />
           </View>
+        
+  
           <View>
             <Animated.FlatList
               onMomentumScrollEnd={(e) => {
@@ -166,20 +190,27 @@ useEffect(() => {
               renderItem={({item, index}) => <Card hotel={item} index={index} />}
               snapToInterval={cardWidth}
             />
+            </View>
+          <View style={style.btn}>
+          <Text style={{color: COLORS.white, fontSize: 18, fontWeight: 'bold'}}
+          //on press booking
+          onPress={() => navigation.navigate('bookingScreen', ownerid)}
+          >
+
+            See Bookings
+          </Text>
+        </View>
+        <View style={style.btn}>
+          <Text style={{color: COLORS.white, fontSize: 18, fontWeight: 'bold'}}
+          //on press booking
+          onPress={() => navigation.navigate('HostelForm', ownerid)}
+          >
+
+            Add New Hostel
+          </Text>
+        
           </View>
         </ScrollView>
-        <Button 
-          mode="outlined"
-          onPress={() => navigation.navigate('bookingScreen', ownerid)}
-        >
-          See Bookings
-        </Button>
-        <Button
-          mode="contained"
-          onPress={() => navigation.navigate('HostelForm', ownerid)}
-        >
-          Add New Hostel
-        </Button>
       </SafeAreaView>
   );
 };
@@ -187,6 +218,15 @@ useEffect(() => {
 const style = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  btn: {
+    height: 55,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 40,
+    backgroundColor: COLORS.primary,
+    marginHorizontal: 20,
+    borderRadius: 10,
   },
   map: {
     width: '50%',
