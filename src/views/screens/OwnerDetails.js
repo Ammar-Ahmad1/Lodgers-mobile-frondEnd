@@ -38,7 +38,7 @@ const [activeCardIndex, setActiveCardIndex] = React.useState(0);
 // };
 
 const roomList = async () => {
-  const roommss = await Axios.get(`http://192.168.1.13:5000/get-rooms/${item._id}`, {
+  const roommss = await Axios.get(`http://10.0.2.2:5000/get-rooms/${item._id}`, {
   });
   setRooms(roommss.data.room);
   console.log(rooms);
@@ -146,7 +146,7 @@ const Card = ({hotel, index}) => {
               color: COLORS.grey,
               marginTop: 5,
             }}>
-            {item.location}
+            {item.location.longitude}:{item.location.latitude}
           </Text>
           <View
             style={{

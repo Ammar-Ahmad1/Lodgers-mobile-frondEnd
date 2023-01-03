@@ -32,21 +32,45 @@ const HomeScreen = ({navigation}) => {
   const scrollX = React.useRef(new Animated.Value(0)).current;
   const [hostel, setHostel] = useState([]);
 
+
+  const [searchText, setSearchText] = useState("");
+  const SearchFilterFunction = (text) => {
+    const newData = hostel.filter(function (item) {
+      //applying filter for the inserted text in search bar
+      const itemData = item.name
+        ? item.name.toUpperCase()
+        : ''.toUpperCase();
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    setHostel(newData);
+    setSearchText(text);
+    // get full list
+    if (text == '') {
+      HostelList();
+    }
+
+  };
+  const HostelList = async () => {
+    const hostelss = await Axios.get("http://10.0.2.2:5000/get-hostels", {
+      // headers: {
+      //   Authorization: "Bearer " + localStorage.getItem("auth_token"),
+      // },
+    });
+    setHostel(hostelss.data.hostels);
+   // console.log(hostel);
+  };
+
+
+
+  useEffect(() => {
+   HostelList();
+  }, []);
+
   const CategoryList = ({navigation}) => {
     
-    const HostelList = async () => {
-      const hostelss = await Axios.get("http://192.168.1.13:5000/get-hostels", {
-        // headers: {
-        //   Authorization: "Bearer " + localStorage.getItem("auth_token"),
-        // },
-      });
-      setHostel(hostelss.data.hostels);
-     // console.log(hostel);
-    };
-    useEffect(() => {
-     HostelList();
-    }, [0]);
-    return (
+
+        return (
       <View style={style.categoryListContainer}>
         {categories.map((item, index) => (
           <TouchableOpacity
@@ -161,14 +185,13 @@ const HomeScreen = ({navigation}) => {
         <View style={{paddingVertical: 5, paddingHorizontal: 10}}>
           <Text style={{fontSize: 10, fontWeight: 'bold'}}>{hotel.name}</Text>
           <Text style={{fontSize: 7, fontWeight: 'bold', color: COLORS.grey}}>
-            {hotel.location}
+            {hotel.location.longitude}: {hotel.location.latitude}
           </Text>
         </View>
       </View>
     );
   };
   const ref = useRef(null);
-  const [searchText, setSearchText] = useState("");
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
       <View style={style.header}>
@@ -194,11 +217,15 @@ const HomeScreen = ({navigation}) => {
           <TextInput
             placeholder="Search"
             style={{fontSize: 20, paddingLeft: 10}}
+            value={searchText}
+            onChangeText={(text) => SearchFilterFunction(text)}
           />
-          <EIcon name="location"       style={{
-        flexDirection: "row",
-        justifyContent: "flex-end"
-      }} size={38} color={COLORS.grey}
+          <EIcon name="location"  size={32} style={{
+            //move to right side
+            position: 'absolute',
+            right: 20,
+
+           }}
           onPress={() => navigation.navigate('Maps')}
         />
         </View>

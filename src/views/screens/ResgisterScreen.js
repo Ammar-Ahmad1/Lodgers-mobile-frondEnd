@@ -47,7 +47,7 @@ export default function RegisterScreen({ navigation }) {
 
 
     //sign up api 
-    fetch("http://192.168.1.13:5000/register-user", {
+    fetch("http://10.0.2.2:5000/register-user", {
       method: "post",
       headers: {
         "Content-Type": "application/json",
