@@ -43,6 +43,7 @@ const OwnerHomeScreen = ({navigation}) => {
         setUser(parsed);
         setOwnerid(parsed._id);
         console.log(parsed._id);
+        HostelList();
     });
   };
   const SearchFilterFunction = (text) => {
@@ -70,9 +71,7 @@ const OwnerHomeScreen = ({navigation}) => {
     console.log(hostelss.data.hostels);
 };
 useEffect(() => {
-
  setMaalik();
-  HostelList();
 }, []);
 
   const Card = ({hotel, index}) => {
@@ -89,6 +88,27 @@ useEffect(() => {
       inputRange,
       outputRange: [0.8, 1, 0.8],
     });
+    const deleteHostel = async () => {
+      const hostelss = await Axios.delete(`http://10.0.2.2:5000/delete-hostel/${hotel._id}`);
+      HostelList();
+  };
+    const Confirmation = () => {
+      console.log("delete");
+      confirmAlert({
+        title: 'Confirm to delete',
+        message: 'Are you sure to do this.',
+        buttons: [
+          {
+            label: 'Yes',
+            onClick: () => deleteHostel(),
+          },
+          {
+            label: 'No',
+            onClick: () => alert('Click No'),
+          },
+        ],
+      });
+  };
 
     return (
       
@@ -117,7 +137,11 @@ useEffect(() => {
                   {hotel.description}
                 </Text>
               </View>
-              <Icon name="bookmark-border" size={26} color={COLORS.primary} />
+              {/* <Icon name="three-dots-vertical" size={20} color={COLORS.grey} /> */}
+              
+              <TouchableOpacity onPress={Confirmation }>
+              <Icon name="delete" size={26} color={"red"} />
+              </TouchableOpacity>  
             </View>
             <View
               style={{
