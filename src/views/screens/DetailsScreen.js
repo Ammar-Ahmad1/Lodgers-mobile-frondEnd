@@ -17,6 +17,7 @@ import COLORS from '../../consts/colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import EIcon from 'react-native-vector-icons/Entypo';
 import Axios from 'axios';
+import ArrowIcon from 'react-native-vector-icons/AntDesign';
 const {width} = Dimensions.get('screen');
 const cardWidth = width / 1.8;
 const DetailsScreen = ({navigation, route}) => {
@@ -58,10 +59,21 @@ const Card = ({hotel, index}) => {
     inputRange,
     outputRange: [0.8, 1, 0.8],
   });
+  const bookHostel = () => {
+    AsyncStorage.getItem('user').then((user) => {
+      if (user) {
+        navigation.navigate('UserBooking', {item,hotel});
+      } else {
+        navigation.navigate('LoginScreen');
+      }
+    });
+  };
+
   return (
     <TouchableOpacity
       disabled={activeCardIndex != index}
       activeOpacity={1}
+      onPress={bookHostel}
      // onPress={() => navigation.navigate('DetailsScreen', hotel)}
      >
       <Animated.View style={{...style.card, transform: [{scale}]}}>
@@ -100,11 +112,12 @@ const Card = ({hotel, index}) => {
               <Icon name="star" size={15} color={COLORS.grey} />
             </View>
             <Text style={{fontSize: 14, color: COLORS.grey}}>{hotel.roomStatus}</Text>
-          
+            <ArrowIcon name="arrowright" size={20} color={COLORS.grey} />
           {/* <EIcon name="dots-three-vertical" size={20} color={COLORS.grey} onPress={booking()}/> */}
           </View>
         </View>
       </Animated.View>
+     
     </TouchableOpacity>
   );
 };
@@ -144,7 +157,7 @@ const Card = ({hotel, index}) => {
               color: COLORS.grey,
               marginTop: 5,
             }}>
-            {item.location}
+            {item.location.coordinates[0]}:{item.location.coordinates[1]}
           </Text>
           <View
             style={{
@@ -215,10 +228,10 @@ const Card = ({hotel, index}) => {
         <View style={style.btn}>
           <Text style={{color: COLORS.white, fontSize: 18, fontWeight: 'bold'}}
           //on press booking
-          onPress={() => navigation.navigate('bookingScreen')}
+          // onPress={() => navigation.navigate('bookingScreen')}
           >
 
-            Book Now
+            Leave Review
           </Text>
         </View>
       </View>
