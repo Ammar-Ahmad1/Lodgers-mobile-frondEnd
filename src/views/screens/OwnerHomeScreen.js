@@ -14,6 +14,7 @@ import {
   Image,
   Animated,
   AsyncStorage,
+  RefreshControl,
 } from 'react-native';
 import Button from '../../components/Button';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -32,6 +33,7 @@ const OwnerHomeScreen = ({navigation}) => {
   const [selectedCategoryIndex, setSelectedCategoryIndex] = React.useState(0);
   const [activeCardIndex, setActiveCardIndex] = React.useState(0);
   const scrollX = React.useRef(new Animated.Value(0)).current;
+  const [refreshing, setRefreshing] = React.useState(false);
   const [hostel, setHostel] = useState([]);
   const [ownerid, setOwnerid] = useState([]);
     const [token,setToken] = useState([]);
@@ -43,9 +45,14 @@ const OwnerHomeScreen = ({navigation}) => {
         setUser(parsed);
         setOwnerid(parsed._id);
         console.log(parsed._id);
-        HostelList();
+        
     });
   };
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    HostelList();
+    setRefreshing(false);
+  }, [refreshing]);
   const SearchFilterFunction = (text) => {
     //passing the inserted text in textinput
     const newData = hostel.filter(function (item) {
@@ -71,7 +78,11 @@ const OwnerHomeScreen = ({navigation}) => {
     console.log(hostelss.data.hostels);
 };
 useEffect(() => {
+  //refresh page
+
  setMaalik();
+  HostelList();
+
 }, []);
 
   const Card = ({hotel, index}) => {
@@ -160,6 +171,9 @@ useEffect(() => {
             </View>
           </View>
         </Animated.View>
+     
+
+     
       </TouchableOpacity>
     );
   };
@@ -213,6 +227,10 @@ useEffect(() => {
               showsHorizontalScrollIndicator={true}
               renderItem={({item, index}) => <Card hotel={item} index={index} />}
               snapToInterval={cardWidth}
+
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
             />
             </View>
           <View style={style.btn}>

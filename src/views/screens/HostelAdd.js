@@ -24,7 +24,7 @@ import * as ImagePicker from 'expo-image-picker';
 import Axios from 'axios';
 import * as Location from 'expo-location';
 import COLORS from '../../consts/colors';
-
+// import Geolocation from 'react-native-geolocation-service';
 export default function RegisterScreen({navigation, route}) {
   const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
     const [name, setName] = useState({ value: '', error: '' })
@@ -41,11 +41,26 @@ export default function RegisterScreen({navigation, route}) {
 
    const getAddress = async() =>{ 
     let location = await Location.getCurrentPositionAsync({});
-    console.log(location.coords.latitude)
+    console.log(location)
+//    console.log(location.coords.latitude)
    setLatitude(location.coords.latitude)
-    console.log(location.coords.longitude)
+  //  console.log(location.coords.longitude)
     setLongitude(location.coords.longitude)
+    let result = await Location.reverseGeocodeAsync({latitude: location.coords.latitude, longitude: location.coords.longitude});
+    // let temp = JsonToStringArray(result);
+
+    console.log(result[0].city)
+    console.log(result[0].country)
+    console.log(result[0].street)
+
     }
+    const JsonToStringArray = (json) => {
+      let result = [];
+      for (let i = 0; i < json.length; i++) {
+        result.push(json[i].city);
+      }
+      return result;
+    };
 const [image, setImage] = useState(null);  
 //hostel features modal
 const [modalVisible, setModalVisible] = useState(false);
@@ -184,33 +199,9 @@ const pickImage = async () => {
         value={description.value}
         onChangeText={(text) => setDescription({ value: text, error: '' })}
       />
-
-                {/* <EIcon name="location"       style={{
-        flexDirection: "row",
-        justifyContent: "flex-end"
-      }} size={38} color="black"
-          onPress={pickImage}
-        /> */}
-      {/* {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />} */}
-      {/* <View style={{
+    <View style={ {
     height: 55,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 40,
-    backgroundColor: COLORS.primary,
-    marginHorizontal: 20,
-    borderRadius: 10,
-  }}>
-          <Text style={{color: COLORS.white, fontSize: 18, fontWeight: 'bold'}}
-          //on press booking
-          onPress={pickImage}
-          >
-
-          Select Picture
-          </Text>
-          </View> */}
-          <View style={ {
-    height: 55,
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 40,
@@ -226,13 +217,22 @@ const pickImage = async () => {
           </Text>
           </View>
           
-        <TouchableOpacity  style={styles.btn}
+        <TouchableOpacity  style={{
+    height: 55,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 40,
+    backgroundColor: COLORS.primary,
+    marginHorizontal: 20,
+    borderRadius: 10,
+  }}
             onPress={() => {
               // setModalVisible(modalVisible);
              setModalVisible(true);
 
             }}>
-          <Text style={styles.textStyle}>Show Modal</Text>
+          <Text style={{color: COLORS.white, fontSize: 18, fontWeight: 'bold'}}>Select Hostel Features</Text>
         </TouchableOpacity>
         <Modal visible={modalVisible} animationType="slide">
     <View style={styles.centeredView}>

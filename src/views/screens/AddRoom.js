@@ -14,6 +14,7 @@ import { nameValidator } from '../../helpers/nameValidator'
 import { Picker } from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as ImagePicker from 'expo-image-picker';
+import FoodIcon from 'react-native-vector-icons/FontAwesome';
 import Axios from 'axios';
 const AddRoom = ({navigation, route}) => {
     const hostel = route.params
@@ -85,16 +86,21 @@ const AddRoom = ({navigation, route}) => {
     return (
         <Background>
         <BackButton goBack={navigation.goBack} />
-        <Logo />
+        {/* <Logo /> */}
         {/* <ScrollView> */}
         <Header>Add Room</Header>
-        
-        <View style={{ borderWidth: 1, borderColor: 'black', borderRadius: 4 }}>
+        <TouchableOpacity style={styles.avatarPlaceholder} onPress={pickImage}>
+      {roomImage && <Image source={{ uri: roomImage }} style={styles.avatar} />}
+      {!roomImage && <FoodIcon name="camera" size={48} color="#fff" />}
+        </TouchableOpacity>
+      {/* make space  */}
+      <View style={{ height: 20 }} />
+        <View style={{ borderWidth: 1, borderColor: 'black', borderRadius: 4, backgroundColor:"white" }}>
         <Picker
         selectedValue={roomType.value}
         style={{ height: 50, width: 300 }}
         onValueChange={(roomType, itemIndex) => setRoomType({ value: roomType, error: '' })}
-        itemStyle={{ backgroundColor: "white", color: "blue", fontFamily:"Ebrima", fontSize:17 }}
+        itemStyle={{ backgroundColor: "white", color: "blue", fontFamily:"Ebrima", fontSize:17,padding: 10, }}
 
         >
         <Picker.Item label="One Seater" value="One Seater" />
@@ -115,10 +121,10 @@ const AddRoom = ({navigation, route}) => {
           value={roomPrice.value}
           onChangeText={(text) => setRoomPrice({ value: text, error: '' })}
         />
-         {roomImage && <Image source={{ uri: roomImage }} style={{ width: 200, height: 200 }} />}
+         {/* {roomImage && <Image source={{ uri: roomImage }} style={{ width: 200, height: 200 }} />}
         <View style={{ borderWidth: 1, borderColor: 'black', borderRadius: 8 }}>
             <Icon name="camera" size={30} color="#900" onPress={pickImage}  />
-                </View>
+                </View> */}
         <Button
           mode="contained"
           onPress={onSignUpPressed}
@@ -140,5 +146,20 @@ const AddRoom = ({navigation, route}) => {
       fontWeight: 'bold',
       color: theme.colors.primary,
     },
+    avatar: {
+      position: 'absolute',
+      width: 100,
+      height: 100,
+      borderRadius: 70
+    },
+    avatarPlaceholder: {
+      width: 100,
+      height: 100,
+      borderRadius: 70,
+      backgroundColor: '#E1E2E6',
+      justifyContent: 'center',
+      alignItems: 'center',
+      
+    }
   })
 export default AddRoom

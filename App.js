@@ -18,6 +18,7 @@ import AddRoom from './src/views/screens/AddRoom';
 import Maps from './src/views/screens/Maps';
 import editUser from './src/views/screens/editUser';
 import BookingScreen from './src/views/screens/owner/BookingScreen';
+import UserBooking from './src/views/screens/UserBooking';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 
 const Drawer = createDrawerNavigator();
@@ -43,6 +44,7 @@ const App = () => {
         <Stack.Screen name="OwnerDetails" component={OwnerDetails} />
         <Stack.Screen name="AddRoom" component={AddRoom} />
         <Stack.Screen name="bookingScreen" component={BookingScreen} />
+        <Stack.Screen name="UserBooking" component={UserBooking} />
       </Stack.Navigator>
     </NavigationContainer>
     
