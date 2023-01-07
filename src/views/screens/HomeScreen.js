@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import EIcon from 'react-native-vector-icons/EvilIcons';
+import EnIcon from 'react-native-vector-icons/Entypo';
 import COLORS from '../../consts/colors';
 // import hotels from '../../consts/hotels';
 //import {GET_HOTEL} from '../../graphql/queries/hotelQueries';
@@ -49,6 +50,11 @@ const HomeScreen = ({navigation}) => {
     if (text == '') {
       HostelList();
     }
+
+  };
+  const getFullList = () => {
+    setSearchText('');
+    HostelList();
 
   };
   const HostelList = async () => {
@@ -220,8 +226,9 @@ const HomeScreen = ({navigation}) => {
             value={searchText}
             onChangeText={(text) => SearchFilterFunction(text)}
           />
-          <Icon name="filter-list" size={30} style={{right: 50,position:'absolute'}} />
-          <EIcon name="location"  size={32} style={{
+          <EnIcon name="cross" size={20} style={{right: 90,position:'absolute'}} onPress={getFullList} />
+          <Icon name="filter-list" size={30} style={{right: 55,position:'absolute'}} />
+          <Icon name="my-location"  size={30} style={{
             //move to right side
             position: 'absolute',
             right: 20,
