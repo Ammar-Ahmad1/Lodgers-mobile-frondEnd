@@ -37,7 +37,7 @@ export default function RegisterScreen({navigation, route}) {
   console.log(owner)
     const [email, setEmail] = useState({ value: '', error: '' })
     const [password, setPassword] = useState({ value: '', error: '' })
-
+    const [city, setCity] = useState("");
 
    const getAddress = async() =>{ 
     let location = await Location.getCurrentPositionAsync({});
@@ -50,6 +50,7 @@ export default function RegisterScreen({navigation, route}) {
     // let temp = JsonToStringArray(result);
 
     console.log(result[0].city)
+    setCity(result[0].city)
     console.log(result[0].country)
     console.log(result[0].street)
 
@@ -130,6 +131,7 @@ const pickImage = async () => {
     formData.append('security', security);
     formData.append('laundry', laundry);
     formData.append('kitchen', kitchen);
+    formData.append('city', city);
 
     formData.append('image', {
       uri: image,

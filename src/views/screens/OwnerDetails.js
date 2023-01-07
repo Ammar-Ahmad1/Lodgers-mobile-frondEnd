@@ -146,7 +146,7 @@ const Card = ({hotel, index}) => {
               color: COLORS.grey,
               marginTop: 5,
             }}>
-            {item.location.longitude}:{item.location.latitude}
+            {/* {item.location.longitude}:{item.location.latitude} */}
           </Text>
           <View
             style={{

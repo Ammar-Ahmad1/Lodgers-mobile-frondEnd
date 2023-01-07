@@ -146,7 +146,7 @@ const Card = ({hotel, index}) => {
       </ImageBackground>
       <View>
         <View style={style.iconContainer}>
-          <Icon name="place" color={COLORS.white} size={28} />
+          <Icon name="place" color={COLORS.white} size={28} onPress={()=> navigation.navigate('HostelMarker',item)} />
         </View>
         <View style={{marginTop: 20, paddingHorizontal: 20}}>
           <Text style={{fontSize: 20, fontWeight: 'bold'}}>{item.name}</Text>
@@ -157,7 +157,7 @@ const Card = ({hotel, index}) => {
               color: COLORS.grey,
               marginTop: 5,
             }}>
-            {item.location.coordinates[0]}:{item.location.coordinates[1]}
+            {/* {item.location.coordinates[0]}:{item.location.coordinates[1]} */}
           </Text>
           <View
             style={{

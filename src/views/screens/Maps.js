@@ -23,9 +23,9 @@ export default function App({navigation}) {
     setHostels(hostelss.data.hostels);
     // console.log(hostels[19]);
 
-    setTempHostel(hostels[19]);
-    console.log(tempHostel.location.coordinates[1]);
-    console.log(tempHostel.location.coordinates[0]);
+    // setTempHostel(hostels[19]);
+    // console.log(tempHostel.location.coordinates[1]);
+    // console.log(tempHostel.location.coordinates[0]);
     // console.log(tempHostel);
     let location1 = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Balanced,
@@ -78,6 +78,7 @@ export default function App({navigation}) {
       // getHostelsNearby();
       
     })();
+
     getHostels();
 
   }, []);
@@ -104,7 +105,7 @@ export default function App({navigation}) {
          zoomEnabled={true}
       >
      
-          <Marker
+          {/* <Marker
             // key={index}
             coordinate={{
               latitude: tempHostel.location.coordinates[1],
@@ -118,7 +119,7 @@ export default function App({navigation}) {
             () => navigation.navigate('DetailsScreen', tempHostel)
           }
 
-          />
+          /> */}
 
       </MapView>
     </View>

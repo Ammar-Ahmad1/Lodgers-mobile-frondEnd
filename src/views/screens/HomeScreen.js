@@ -31,7 +31,7 @@ const HomeScreen = ({navigation}) => {
   const [activeCardIndex, setActiveCardIndex] = React.useState(0);
   const scrollX = React.useRef(new Animated.Value(0)).current;
   const [hostel, setHostel] = useState([]);
-
+  const [modalVisible, setModalVisible] = useState(false);
 
   const [searchText, setSearchText] = useState("");
   const SearchFilterFunction = (text) => {
@@ -220,6 +220,7 @@ const HomeScreen = ({navigation}) => {
             value={searchText}
             onChangeText={(text) => SearchFilterFunction(text)}
           />
+          <Icon name="filter-list" size={30} style={{right: 50,position:'absolute'}} />
           <EIcon name="location"  size={32} style={{
             //move to right side
             position: 'absolute',

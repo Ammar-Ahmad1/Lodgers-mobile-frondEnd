@@ -44,10 +44,14 @@ export default function RegisterOwnerScreen({ navigation }) {
       .then((res) => res.json())
       .then((result) => {
         console.log(result)
+        AsyncStorage.setItem("jwt", result.token);
+        AsyncStorage.setItem("user", JSON.stringify(result.userInfo));
         navigation.reset({
           index: 0,
           routes: [{ name: 'OwnerHome' }],
+          
         })
+
       }
       )
       .catch((err) => {
