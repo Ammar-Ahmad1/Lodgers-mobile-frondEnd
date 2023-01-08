@@ -8,7 +8,7 @@ express and mongo db. VS code was used for development.
 
 ########################################
 
-Pre Requisites:
+#Pre Requisites:
 1. Node js
 2. npm
 3. expo setup
@@ -19,7 +19,7 @@ Pre Requisites:
 
 ########################################
 
-Run:
+#Run:
 1. run npm install on terminal
 2. run expo start
 3. Follow the instructions on terminal
