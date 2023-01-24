@@ -10,9 +10,14 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
-  AsyncStorage
+  AsyncStorage,
+  Modal,
+  TextInput,
+  FlatList,
+  LogBox,
 
 } from 'react-native';
+import Background from '../../components/Background'
 import COLORS from '../../consts/colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import EIcon from 'react-native-vector-icons/Entypo';
@@ -26,6 +31,12 @@ const [rooms,setRooms] = useState([ ])
 const scrollX = React.useRef(new Animated.Value(0)).current;
 const [selectedCategoryIndex, setSelectedCategoryIndex] = React.useState(0);
 const [activeCardIndex, setActiveCardIndex] = React.useState(0);
+const [modalVisible, setModalVisible] = useState(false);
+const [showReview, setShowReview] = useState(false);
+const [review, setReview] = useState('');
+const [reviews, setReviews] = useState([]);
+const [user, setUser] = useState(null);
+const [reviewUser, setReviewUser] = useState([]);
 // const booking = () => {
 //   AsyncStorage.getItem('user').then((user) => {
 //     if (user) {
@@ -35,15 +46,64 @@ const [activeCardIndex, setActiveCardIndex] = React.useState(0);
 //     }
 //   });
 // };
+const getReviews = async () => {
+  const reviews = await Axios.get(`http://10.0.2.2:5000/get-reviews/${item._id}`);
+  setReviews(reviews.data.reviews);
+  // console.log(reviews.data);
+  //get users 
+
+};
+const getUserById = async (id) => {
+  console.log("getting user with id", id)
+  fetch(`http://10.0.2.2:5000/get-user/${id}`)
+  .then(res => res.json())
+  .then(data => {
+    console.log(data, "data")
+    setReviewUser(data.user)
+  })
+  .catch(err => console.log(err))
+
+
+  // const user = await Axios.get(`http://10.0.2.2:5000/get-user/${id}`);
+  // setReviewUser(user.data.user);
+  // console.log(user.user,"hello")
+  // // console.log
+};
+const addReview = () => {
+  AsyncStorage.getItem('user').then((user) => {
+    let id=JSON.parse(user)._id
+    if (user) {
+      Axios.post('http://10.0.2.2:5000/add-review', {
+        review,
+        hostel: item._id,
+        user: id,
+      }).then((res) => {
+        // console.log(res.data);
+        setModalVisible(false);
+        setReview('');
+      });
+    } else {
+      navigation.navigate('LoginScreen');
+    }
+  });
+};
+
+
 
 const roomList = async () => {
   const roommss = await Axios.get(`http://10.0.2.2:5000/get-rooms/${item._id}`, {
   });
   setRooms(roommss.data.room);
-  console.log(rooms);
+  // console.log(rooms);
 };
 useEffect(() => {
   roomList();
+  getReviews();
+  AsyncStorage.getItem('user').then((user) => {
+    setUser(JSON.parse(user));
+  });
+  LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+
 }, []);
 const Card = ({hotel, index}) => {
   const inputRange = [
@@ -121,6 +181,45 @@ const Card = ({hotel, index}) => {
     </TouchableOpacity>
   );
 };
+const openModal = () => {
+  AsyncStorage.getItem('user').then((user) => {
+    if (user) {
+      setModalVisible(true);
+    } else {
+      navigation.navigate('LoginScreen');
+    }
+  });
+};
+const ReviewCard = ({review,user1}) => {
+  // console.log(review)
+  // console.log(user1,"USEERRR!111")
+  return (
+    <ScrollView>
+    <View style={style.reviewCard}>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        {/* <Image
+          source={{uri:review.user.image}}
+          style={{width: 50, height: 50, borderRadius: 25}}
+        /> */}
+        <View style={{marginLeft: 10}}>
+          <Text style={{fontWeight: 'bold', fontSize: 15}}>
+            {/* {user1.name} */}
+          </Text>
+          <Text style={{color: COLORS.grey, fontSize: 12}}>
+            {/* {user1.email} */}
+          </Text>
+        </View>
+      </View>
+      <View style={{marginTop: 10}}>
+        <Text style={{color: COLORS.grey, fontSize: 15, fontWeight: 'bold'}}>
+          {review.review}
+        </Text>
+      </View>
+    </View>
+    </ScrollView>
+  );
+};
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -141,7 +240,7 @@ const Card = ({hotel, index}) => {
             color={COLORS.white}
             onPress={navigation.goBack}
           />
-          <Icon name="bookmark-border" size={28} color={COLORS.white} />
+          <Icon name="rate-review" size={28} color={COLORS.white} onPress={()=>setShowReview(true)}/>
         </View>
       </ImageBackground>
       <View>
@@ -184,25 +283,8 @@ const Card = ({hotel, index}) => {
               {item.description}
             </Text>
           </View>
-        </View>
-        {/* <View
-          style={{
-            marginTop: 20,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            paddingLeft: 20,
-            alignItems: 'center',
-          }}>
-          <Text style={{fontSize: 20, fontWeight: 'bold'}}>
-            Price per night
-          </Text>
-          <View style={style.priceTag}>
-
           </View>
- 
-        </View>
-  */}
-        <View>
+          <View>
           <Animated.FlatList
             onMomentumScrollEnd={(e) => {
               setActiveCardIndex(
@@ -228,18 +310,115 @@ const Card = ({hotel, index}) => {
         <View style={style.btn}>
           <Text style={{color: COLORS.white, fontSize: 18, fontWeight: 'bold'}}
           //on press booking
-          // onPress={() => navigation.navigate('bookingScreen')}
+          onPress={openModal}
           >
 
             Leave Review
           </Text>
+          <Modal visible={modalVisible} animationType="slide">
+            <View style={style.modalContent}>
+              <Icon
+                name="close"
+                size={24}
+                style={{...style.modalToggle, ...style.modalClose}}
+                onPress={() => setModalVisible(false)}
+              />
+              <Text style={{fontSize: 20, fontWeight: 'bold'}}>Review</Text>
+              <Text style={{fontSize: 14, color: COLORS.grey}}>
+                Leave a review for this hostel
+              </Text>
+              <View style={{marginTop: 20}}>
+                <Text style={{fontSize: 14, color: COLORS.grey}}>
+                  Your review
+                </Text>
+                <TextInput
+                  style={{
+                    height: 100,
+                    borderWidth: 1,
+                    borderColor: COLORS.grey,
+                    borderRadius: 10,
+                    marginTop: 10,
+                    padding: 10,
+                  }}
+                  multiline
+                  numberOfLines={4}
+                  placeholder="Write your review here"
+                  onChangeText={(val) => setReview(val)}
+                />
+
+              </View>
+              {/* submit */}
+              <TouchableOpacity style={style.btn}>
+                <Text style={{color: COLORS.white, fontSize: 18, fontWeight: 'bold'}}
+                onPress={addReview}
+                >
+                  Submit
+                </Text>
+              </TouchableOpacity>
+
+            </View>
+          </Modal>          
         </View>
-      </View>
+      
+      <Modal visible={showReview} animationType="slide">
+           
+                  
+                  <View style={style.modalContent}>
+              <Icon
+                name="close"
+                size={24}
+                style={{...style.modalToggle, ...style.modalClose}}
+                onPress={() => setShowReview(false)}
+              />
+              </View>
+              <Background>
+              <Text style={style.heading}>Reviews</Text>
+              <Text style={style.heading}>
+                Reviews for this hostel
+              </Text>
+              <View style={{marginTop: 20}}>                
+                <Animated.FlatList
+                  onMomentumScrollEnd={(e) => {
+                    setActiveCardIndex(
+                      Math.round(e.nativeEvent.contentOffset.x / cardWidth),
+                    );
+                  }}
+                  onScroll={Animated.event(
+                    [{nativeEvent: {contentOffset: {x: scrollX}}}],
+                    {useNativeDriver: true},
+                  )}
+                  vertical
+                  data={reviews}
+                  contentContainerStyle={{
+                    paddingVertical: 30,
+                    paddingLeft: 20,
+                    paddingRight: cardWidth / 2 - 40,
+                  }}
+                  showsVerticalScrollIndicator={true}
+                  //send reviewUser after calling   
+                  renderItem={({item, index}) => <ReviewCard review={item}  index={index} />
+                }
+                  snapToInterval={cardWidth}
+                />
+                
+              </View> 
+            </Background>
+            
+
+          </Modal>
+        </View>
     </ScrollView>
+    
   );
 };
 
 const style = StyleSheet.create({
+  heading: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 20,
+    marginLeft: 20,
+  },
   btn: {
     height: 55,
     justifyContent: 'center',
@@ -248,6 +427,18 @@ const style = StyleSheet.create({
     backgroundColor: COLORS.primary,
     marginHorizontal: 20,
     borderRadius: 10,
+  },
+  reviewCard: {
+    height: 150,
+    width: 2000,
+    // backgroundColor: COLORS.white,
+    backgroundColor: 'skyblue',
+    borderRadius: 20  ,
+    padding: 20,
+    marginTop: 20,
+    marginRight: 20,
+    elevation: 5,
+
   },
 
   priceTag: {
