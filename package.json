@@ -45,7 +45,8 @@
     "react-native-screens": "^3.18.2",
     "react-native-status-bar-height": "^2.6.0",
     "react-navigation": "^4.4.4",
-    "expo-dev-client": "~2.0.1"
+    "expo-dev-client": "~2.0.1",
+    "@react-native-community/datetimepicker": "6.5.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
