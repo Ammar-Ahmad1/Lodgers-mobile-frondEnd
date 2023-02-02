@@ -13,6 +13,7 @@ import {
   View,
   Image,
   Animated,
+  AsyncStorage,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import EIcon from 'react-native-vector-icons/EvilIcons';
@@ -32,6 +33,7 @@ const UserDashboard = ({navigation}) => {
   const scrollX = React.useRef(new Animated.Value(0)).current;
   const [hostel, setHostel] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [userId, setUserId] = useState("");
   const HostelList = async () => {
     const hostelss = await Axios.get("http://10.0.2.2:5000/get-hostels", {
       // headers: {
@@ -61,6 +63,11 @@ const UserDashboard = ({navigation}) => {
   };
   useEffect(() => {
    HostelList();
+   AsyncStorage.getItem('user').then(user=>{
+    user = JSON.parse(user)
+    setUserId(user._id)
+  })
+
   }, []);
   const CategoryList = ({navigation}) => {
     
@@ -279,6 +286,15 @@ const UserDashboard = ({navigation}) => {
           }}
           renderItem={({item}) => <TopHotelCard hotel={item} />}
         />
+          <View style={style.btn}>
+          <Text style={{color: COLORS.white, fontSize: 18, fontWeight: 'bold'}}
+          //on press booking
+          onPress={() => navigation.navigate('bookingScreen', userId)}
+          >
+
+            See Bookings
+          </Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -290,6 +306,15 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
+  },
+  btn:{
+    height: 55,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 40,
+    backgroundColor: COLORS.primary,
+    marginHorizontal: 20,
+    borderRadius: 10,
   },
   searchInputContainer: {
     height: 50,

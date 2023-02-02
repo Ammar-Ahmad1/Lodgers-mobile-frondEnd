@@ -236,7 +236,7 @@ useEffect(() => {
           <View style={style.btn}>
           <Text style={{color: COLORS.white, fontSize: 18, fontWeight: 'bold'}}
           //on press booking
-          onPress={() => navigation.navigate('bookingScreen', ownerid)}
+          onPress={() => navigation.navigate('OwnerBooking', ownerid)}
           >
 
             See Bookings
