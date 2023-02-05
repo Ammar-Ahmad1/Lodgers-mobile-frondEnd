@@ -193,7 +193,16 @@ useEffect(() => {
           onPress={() => navigation.navigate('editOwner')}
         />
       </View>
-      <ScrollView showsVerticalScrollIndicator={true}>
+      <ScrollView showsVerticalScrollIndicator={true}
+       refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={HostelList}
+        />
+      }
+
+
+      >
       <View style={style.searchInputContainer}>
             <Icon name="search" size={30} style={{marginLeft: 20}} />
             <TextInput
@@ -227,10 +236,6 @@ useEffect(() => {
               showsHorizontalScrollIndicator={true}
               renderItem={({item, index}) => <Card hotel={item} index={index} />}
               snapToInterval={cardWidth}
-
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
             />
             </View>
           <View style={style.btn}>
