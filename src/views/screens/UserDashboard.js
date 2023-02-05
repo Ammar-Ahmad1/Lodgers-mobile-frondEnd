@@ -17,6 +17,8 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import EIcon from 'react-native-vector-icons/EvilIcons';
+import EnIcon from 'react-native-vector-icons/Entypo';
+
 import COLORS from '../../consts/colors';
 // import hotels from '../../consts/hotels';
 //import {GET_HOTEL} from '../../graphql/queries/hotelQueries';
@@ -43,7 +45,11 @@ const UserDashboard = ({navigation}) => {
     setHostel(hostelss.data.hostels);
    // console.log(hostel);
   };
-  
+  const getFullList = () => {
+    setSearchText('');
+    HostelList();
+
+  };
   const SearchFilterFunction = (text) => {
     const newData = hostel.filter(function (item) {
       //applying filter for the inserted text in search bar
@@ -229,6 +235,8 @@ const UserDashboard = ({navigation}) => {
             value={searchText}
             onChangeText={(text) => SearchFilterFunction(text)}
           />
+          <EnIcon name="cross" size={20} style={{right: 90,position:'absolute'}} onPress={getFullList} />
+          <Icon name="filter-list" size={30} style={{right: 55,position:'absolute'}} />
           <EIcon name="location"  size={32} style={{
             //move to right side
             position: 'absolute',
