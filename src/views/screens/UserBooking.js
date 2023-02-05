@@ -53,7 +53,11 @@ const UserBooking = ({navigation,route}) => {
                     customerName:user.name,
                     price:hotel.roomPrice,
                     message:message,
-                    ownerId:item.owner
+                    ownerId:item.owner,
+                    hostelName:item.name,
+                    roomImage:hotel.roomImage,
+                    roomType:hotel.roomType,
+                    roomId:hotel._id,
                 })
             }).then(res=>res.json())
             .then(data=>{

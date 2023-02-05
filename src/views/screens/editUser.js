@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, TouchableOpacity, AsyncStorage} from 'react-native'
+import { View, StyleSheet, TouchableOpacity, AsyncStorage,Image} from 'react-native'
 import { Text } from 'react-native-paper'
 import Background from '../../components/Background'
 import Logo from '../../components/Logo'
@@ -11,7 +11,7 @@ import { theme } from '../../core/theme'
 import { emailValidator } from '../../helpers/emailValidator'
 import { passwordValidator } from '../../helpers/passwordValidator'
 import { nameValidator } from '../../helpers/nameValidator'
-
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 export default function EditUser({ navigation }) {
   const [name, setName] = useState({ value: '', error: '' })
   const [email, setEmail] = useState({ value: '', error: '' })
@@ -67,7 +67,18 @@ AsyncStorage.getItem('user').then((user) => {
   return (
     <Background>
       <BackButton goBack={navigation.goBack} />
-      <Logo />
+      <TouchableOpacity style={styles.avatarPlaceholder} >
+      {user.image ? (
+        <Image source={{ uri: user.image }} style={styles.avatar} />
+      ) : (
+        <MaterialCommunityIcons
+          name="account"
+          size={40}
+          color="#fff"
+        />
+      )}
+
+      </TouchableOpacity>
       <Header>Update Account</Header>
       <TextInput
         label="Name"
@@ -125,4 +136,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: theme.colors.primary,
   },
+  avatar: {
+    position: 'absolute',
+    width: 100,
+    height: 100,
+    borderRadius: 70
+  },
+  avatarPlaceholder: {
+    width: 100,
+    height: 100,
+    borderRadius: 70,
+    backgroundColor: '#E1E2E6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    
+  }
 })

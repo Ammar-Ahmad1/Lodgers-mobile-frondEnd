@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { View, StyleSheet, TouchableOpacity } from 'react-native'
+import React, { useState,useEffect } from 'react'
+import { View, StyleSheet, TouchableOpacity,Image } from 'react-native'
 import { Text } from 'react-native-paper'
 import Background from '../../components/Background'
 import Logo from '../../components/Logo'
@@ -11,12 +11,15 @@ import { theme } from '../../core/theme'
 import { emailValidator } from '../../helpers/emailValidator'
 import { passwordValidator } from '../../helpers/passwordValidator'
 import { nameValidator } from '../../helpers/nameValidator'
+import * as ImagePicker from 'expo-image-picker';
+import FoodIcon from 'react-native-vector-icons/FontAwesome';
+
 
 export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState({ value: '', error: '' })
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
-
+  const [image, setImage] = useState(null);
   const onSignUpPressed = () => {
     const nameError = nameValidator(name.value)
     const emailError = emailValidator(email.value)
@@ -27,37 +30,21 @@ export default function RegisterScreen({ navigation }) {
       setPassword({ ...password, error: passwordError })
       return
     }
-    // fetch("http://10.0.2.2:5000/register-user", {
-    //   method: "post",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     name,
-    //     email,
-    //     password,
-        
-    //   }),
-    // })
-    //   .then((res) => res.json())
-    //   .then((result) => {})
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+    const formData = new FormData();
+    formData.append('name', name.value)
+    formData.append('email', email.value)
+    formData.append('password', password.value)
+    formData.append('image', {
+      uri: image,
+      type: 'image/jpeg',
+      name: 'image.jpg',
+    });
 
-
-    //sign up api 
     fetch("http://10.0.2.2:5000/register-user", {
+      body : formData,
       method: "post",
       headers: {
-        "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        name:name.value,
-        email: email.value,
-        password: password.value,
-
-      }),
     })
       .then((res) => res.json())
       .then((result) => {
@@ -76,11 +63,40 @@ export default function RegisterScreen({ navigation }) {
 
 
   }
+  useEffect(() => {
+    (async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!');
+        }
+      
+    })();
+  }, []);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
 
   return (
     <Background>
       <BackButton goBack={navigation.goBack} />
-      <Logo />
+    <TouchableOpacity style={styles.avatarPlaceholder} onPress={pickImage}>
+      {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+      {!image && <FoodIcon name="camera" size={48} color="#fff" />}
+
+    </TouchableOpacity>
+
       <Header>Create Account</Header>
       <TextInput
         label="Name"
@@ -137,4 +153,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: theme.colors.primary,
   },
+  avatar: {
+    position: 'absolute',
+    width: 100,
+    height: 100,
+    borderRadius: 70
+  },
+  avatarPlaceholder: {
+    width: 100,
+    height: 100,
+    borderRadius: 70,
+    backgroundColor: '#E1E2E6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    
+  }
 })
