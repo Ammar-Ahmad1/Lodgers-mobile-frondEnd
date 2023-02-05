@@ -72,11 +72,15 @@ const getUserById = async (id) => {
 const addReview = () => {
   AsyncStorage.getItem('user').then((user) => {
     let id=JSON.parse(user)._id
+    let name=JSON.parse(user).name
+    let email=JSON.parse(user).email
     if (user) {
       Axios.post('http://10.0.2.2:5000/add-review', {
         review,
         hostel: item._id,
         user: id,
+        name:name,
+        email:email
       }).then((res) => {
         // console.log(res.data);
         setModalVisible(false);
@@ -203,10 +207,10 @@ const ReviewCard = ({review,user1}) => {
         /> */}
         <View style={{marginLeft: 10}}>
           <Text style={{fontWeight: 'bold', fontSize: 15}}>
-            {/* {user1.name} */}
+            {review.name}
           </Text>
           <Text style={{color: COLORS.grey, fontSize: 12}}>
-            {/* {user1.email} */}
+            {review.email}
           </Text>
         </View>
       </View>
