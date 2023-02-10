@@ -21,14 +21,19 @@ import BookingScreen from './src/views/screens/owner/BookingScreen';
 import UserBooking from './src/views/screens/UserBooking';
 import HostelMarker from './src/views/screens/HostelMarker';
 import OwnerBooking from './src/views/screens/owner/OwnerBooking';
+import PaymentScreen from './src/views/screens/PaymentScreen';
 import {createDrawerNavigator} from '@react-navigation/drawer';
+import {StripeProvider} from '@stripe/stripe-react-native';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 const App = () => {
   return (
+    <StripeProvider
+    publishableKey='pk_test_51MYkFEL77mu1NJWW0SQdkRBwxifzWD5LWNBJcWF8khXWFMJMvV4pMqL8MDTiivOeBnEFErZOMoZoSqUhWaGgk8SC00Roo2wpq6'
+    >
+
     <NavigationContainer>
-  
       <StatusBar backgroundColor={COLORS.white} barStyle="dark-content" />
       <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="Home" component={HomeScreen} />
@@ -49,8 +54,10 @@ const App = () => {
         <Stack.Screen name="UserBooking" component={UserBooking} />
         <Stack.Screen name="HostelMarker" component={HostelMarker} />
         <Stack.Screen name="OwnerBooking" component={OwnerBooking} />
+        <Stack.Screen name="PaymentScreen" component={PaymentScreen} />
       </Stack.Navigator>
     </NavigationContainer>
+    </StripeProvider>
     
   );
 };

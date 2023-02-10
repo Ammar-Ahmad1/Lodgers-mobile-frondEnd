@@ -327,6 +327,7 @@ dependencies {
     }
     implementation 'com.facebook.android:facebook-login:latest.release'
     implementation project(':react-native-maps')
+    implementation 'com.stripe:stripe-android:20.19.1'
 
 }
 

@@ -1,12 +1,14 @@
-import React, { Component } from "react";
+import React, { Component, useEffect,useState } from "react";
 import { StyleSheet, View, Text, Image, TouchableOpacity,Button,Alert } from "react-native";
 import Axios from "axios";
 import { ScrollView } from "react-native-gesture-handler";
+import {useNavigation} from '@react-navigation/native';
+import {usePaymentSheet} from '@stripe/stripe-react-native';
 
 
-function MaterialCardWithImageAndTitle(props, { navigation }) {
+function MaterialCardWithImageAndTitle(props) {
   const booking = props.booking;
-  console.log(booking);
+  const navigation = useNavigation();
   const deleteBooking = (id) => {
     console.log(id)
     Axios.delete(`http://10.0.2.2:5000/delete-booking/${id}`)
@@ -37,6 +39,7 @@ function MaterialCardWithImageAndTitle(props, { navigation }) {
   }
 
 
+
   return (
     <View style={[styles.container, props.style]}>
       <View style={styles.cardBody}>
@@ -55,7 +58,27 @@ function MaterialCardWithImageAndTitle(props, { navigation }) {
           style={styles.cardItemImagePlace}
         ></Image>
       </View>
-      {!booking.status? (
+
+          { booking.paid?
+          <View style={{
+            backgroundColor:"green",
+            marginTop:25,
+            height:35,
+            alignItems:"center",
+            justifyContent:"center"
+
+
+          }}>
+          <Text style={{color:"white"}}>Paid</Text>
+          </View>
+          :null
+
+          }
+
+
+
+
+      {!booking.status||booking.paid? 
       <View style={styles.btn}>
       <Button
         title="Cancel"
@@ -65,15 +88,22 @@ function MaterialCardWithImageAndTitle(props, { navigation }) {
       >
       </Button>
       </View>
-      ):(<View style={styles.btn}>
+      :<View style={styles.btn}>
       <Button
         title="Proceed to Payment"
         color="#841584"
-      
+        onPress={() => navigation.navigate('PaymentScreen',{booking:booking})}
       >
       </Button>
-      </View>)
+      </View>
       }
+
+{/*       
+        <View style={styles.btn}>
+        <Text style={{color:"green"}}>Paid</Text>
+        </View> */}
+      
+      
     </View>
   );
 }

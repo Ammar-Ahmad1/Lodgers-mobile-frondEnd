@@ -8,7 +8,7 @@ export default function Background1({ children }) {
 
       source={require('../assets/bg2.jpg')}
       //resizeMode="repeat"
-      opacity= {0.5}
+      opacity= {0.4}
       style={styles.background}
     >
       <KeyboardAvoidingView style={styles.container} behavior="padding">
