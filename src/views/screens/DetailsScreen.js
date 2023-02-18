@@ -17,12 +17,14 @@ import {
   LogBox,
 
 } from 'react-native';
-import Background from '../../components/Background'
+import Background1 from '../../components/Background1'
 import COLORS from '../../consts/colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import EIcon from 'react-native-vector-icons/Entypo';
 import Axios from 'axios';
 import ArrowIcon from 'react-native-vector-icons/AntDesign';
+import ReviewItem from '../../components/ReviewItem';
+import BackButton from '../../components/BackButton';
 const {width} = Dimensions.get('screen');
 const cardWidth = width / 1.8;
 const DetailsScreen = ({navigation, route}) => {
@@ -365,53 +367,28 @@ const ReviewCard = ({review,user1}) => {
         </View>
       
       <Modal visible={showReview} animationType="slide">
-           
-                  
-                  <View style={style.modalContent}>
-              <Icon
-                name="close"
-                size={24}
-                style={{...style.modalToggle, ...style.modalClose}}
-                onPress={() => setShowReview(false)}
-              />
-              </View>
-              <Background>
-              <Text style={style.heading}>Reviews</Text>
-              <Text style={style.heading}>
-                Reviews for this hostel
-              </Text>
-              <View style={{marginTop: 20}}>                
-                <Animated.FlatList
-                  onMomentumScrollEnd={(e) => {
-                    setActiveCardIndex(
-                      Math.round(e.nativeEvent.contentOffset.x / cardWidth),
-                    );
-                  }}
-                  onScroll={Animated.event(
-                    [{nativeEvent: {contentOffset: {x: scrollX}}}],
-                    {useNativeDriver: true},
-                  )}
-                  vertical
-                  data={reviews}
-                  contentContainerStyle={{
-                    paddingVertical: 30,
-                    paddingLeft: 20,
-                    paddingRight: cardWidth / 2 - 40,
-                  }}
-                  showsVerticalScrollIndicator={true}
-                  //send reviewUser after calling   
-                  renderItem={({item, index}) => <ReviewCard review={item}  index={index} />
-                }
-                  snapToInterval={cardWidth}
-                />
-                
-              </View> 
-            </Background>
-            
-
-          </Modal>
-        </View>
-    </ScrollView>
+        <Background1>
+        <View style={{ flex: 1 }}>
+            <View style={{ padding: 16, flexDirection: 'row', alignItems: 'center' }}>
+            <BackButton />
+        <Text style={{ marginLeft: 16, fontSize: 24 }}>Hostel Reviews</Text>
+      </View>
+      <TextInput
+        style={{ paddingHorizontal: 16, paddingVertical: 8 }}
+        placeholder="Search reviews"
+        // value={searchTerm}
+        // onChangeText={setSearchTerm}
+      />
+      <FlatList
+        data={reviews}
+        keyExtractor={review => review._id.toString()}
+        renderItem={({ item }) => <ReviewItem review={item} />}
+      />
+    </View>
+        </Background1>        
+      </Modal>
+    </View>
+  </ScrollView>
     
   );
 };
