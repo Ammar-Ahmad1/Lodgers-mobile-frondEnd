@@ -34,7 +34,11 @@ import Header from '../../../components/Header'
 
 const BookingScreen = ({navigation, route} ) => {
   const id= route.params
+  const categories = ['All', 'Paid', 'Pending', 'Cancelled'];
+  const [selectedCategoryIndex, setSelectedCategoryIndex] = React.useState(0);
+
   const [bookings, setBookings] = React.useState([])
+  const [checkBooking, setCheckBooking] = React.useState([])
   const [refreshing, setRefreshing] = React.useState(false);
   const [searchText, setSearchText] = React.useState('')
   const getBookings = () => {
@@ -42,8 +46,10 @@ const BookingScreen = ({navigation, route} ) => {
     .then(res => {
       console.log(res.data.booking)
       setBookings(res.data.booking)
+      setCheckBooking(res.data.booking)
     }
     )
+    setSelectedCategoryIndex(0);
 
   }
   const SearchFilterFunction = (text) => {
@@ -66,23 +72,73 @@ const BookingScreen = ({navigation, route} ) => {
   React.useEffect(() => {
     getBookings()
   }, [])
- 
-  return (
-    <Background1>
-      <BackButton goBack={() => navigation.navigate('UserDashboard')} />
-        <ScrollView 
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{flexGrow: 1, justifyContent: 'space-between', paddingBottom: 20 , paddingHorizontal: 20}}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={getBookings}
-          />
-        }
-        
-        >
+  const CategoryList = ({navigation}) => {
     
+    const updateListwithCategory = (index) => {
+      setSelectedCategoryIndex(index)
+      if(index === 0){
+        getBookings()
+      }
+
+      if(index === 1){
+        const newData = checkBooking.filter((item) => {
+          const itemData=item.status 
+          const textData = true;
+          return itemData === textData;
+        });
+        setBookings(newData);
+      }
+      if(index === 2){
+        const newData = checkBooking.filter((item) => {
+          const itemData=item.status 
+          const textData = false;
+          return itemData === textData;
+        });
+        setBookings(newData);
+      }
+
+
+    }
+    return (
+      <View style={styles.categoryListContainer}>
+        {categories.map((item, index) => (
+          <TouchableOpacity
+            key={index}
+            activeOpacity={0.8}
+            onPress={()=>{updateListwithCategory(index)}}>
+            <View>
+              <Text
+                style={{
+                  ...styles.categoryListText,
+                  color:
+                    selectedCategoryIndex == index
+                      ? COLORS.primary
+                      : COLORS.black,
+                }}>
+                {item}
+              </Text>
+              {selectedCategoryIndex == index && (
+                <View
+                  style={{
+                    height: 3,
+                    width: 30,
+                    backgroundColor: COLORS.primary,
+                    marginTop: 2,
+                  }}
+                />
+              )}
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
+  };
+  return (
+    // <Background1>
+
+      
       <View style={styles.container}>
+        <BackButton goBack={() => navigation.navigate('UserDashboard')} />
         <View style={styles.bookingsStack}>
           <Text style={styles.bookings}>Bookings</Text>
           <View style={styles.searchInputContainer}>
@@ -95,6 +151,18 @@ const BookingScreen = ({navigation, route} ) => {
             />
           </View>
         </View>
+        <CategoryList />
+        <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{flexGrow: 1, justifyContent: 'space-between', paddingBottom: 20 , paddingHorizontal: 20}}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={getBookings}
+          />
+        }
+        
+        >
       
         {
           bookings.length === 0 ? (
@@ -114,15 +182,17 @@ const BookingScreen = ({navigation, route} ) => {
               </MaterialCardWithImageAndTitle>
             </View>        
           ))}
+        </ScrollView>
         </View>
-      </ScrollView>
-    </Background1>
+      
+    // </Background1>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: Dimensions.get('window').width,
   },
   bookings: {
     top: 0,
@@ -189,9 +259,10 @@ const styles = StyleSheet.create({
   },
   searchInputContainer: {
     height: 50,
-    backgroundColor: COLORS.light,
+    width: 400,
+    backgroundColor: "lightgrey",
     marginTop: 35,
-    marginLeft: 0,
+    marginLeft: 6,
     borderTopLeftRadius: 15,
     borderBottomLeftRadius: 15,
     borderTopRightRadius: 15,
@@ -212,7 +283,17 @@ const styles = StyleSheet.create({
     left: 242,
     top: 135
   },
-
+  categoryListContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 20,
+    marginTop: 30,
+  },
+  categoryListText: {
+    fontSize: 17,
+    fontWeight: 'bold',
+  },
+  
 });
 
 

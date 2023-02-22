@@ -32,12 +32,7 @@ const HostelMarker = ({navigation, route}) => {
             }}
 
             title={hostel.name}
-            description={hostel.description}
-
-          // onPress={
-          //   () => navigation.navigate('DetailsScreen', hostel)
-          // }
-          
+            description={hostel.description}          
           />
 
       </MapView>
