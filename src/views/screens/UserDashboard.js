@@ -18,7 +18,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import EIcon from 'react-native-vector-icons/EvilIcons';
 import EnIcon from 'react-native-vector-icons/Entypo';
-
+import WifiIcon from 'react-native-vector-icons/FontAwesome';
 import COLORS from '../../consts/colors';
 // import hotels from '../../consts/hotels';
 //import {GET_HOTEL} from '../../graphql/queries/hotelQueries';
@@ -36,6 +36,13 @@ const UserDashboard = ({navigation}) => {
   const [hostel, setHostel] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [userId, setUserId] = useState("");
+  const [wifi, setWifi] = useState(false);
+  const [parking, setParking] = useState(false);
+  const [food, setFood] = useState(false);
+  const [laundry, setLaundry] = useState(false);
+  const [tv, setTv] = useState(false);
+
+
   const HostelList = async () => {
     const hostelss = await Axios.get("http://10.0.2.2:5000/get-hostels", {
       // headers: {
@@ -43,7 +50,7 @@ const UserDashboard = ({navigation}) => {
       // },
     });
     setHostel(hostelss.data.hostels);
-   // console.log(hostel);
+   console.log(hostel);
   };
   const getFullList = () => {
     setSearchText('');
@@ -148,7 +155,7 @@ const UserDashboard = ({navigation}) => {
                   {hotel.name}
                 </Text>
                 <Text style={{color: COLORS.grey, fontSize: 12}}>
-                  {hotel.location.longitude}:{hotel.location.latitude}
+                  {hotel.city}
                 </Text>
               </View>
               <Icon name="bookmark-border" size={26} color={COLORS.primary} />
@@ -159,14 +166,47 @@ const UserDashboard = ({navigation}) => {
                 justifyContent: 'space-between',
                 marginTop: 10,
               }}>
-              <View style={{flexDirection: 'row'}}>
+                {hotel.features.wifi ? (
+                  <View style={style.facility}>
+                    <WifiIcon name="wifi" size={15} color={COLORS.grey} />
+                  </View>
+                ) : null}
+                {hotel.features.parking ? (
+                  <View style={style.facility}>
+                    <Icon name="local-parking" size={15} color={COLORS.grey} />
+                  </View>
+                ) : null}
+                {hotel.features.food ? (
+                  <View style={style.facility}>
+                    <Icon name="restaurant" size={15} color={COLORS.grey} />
+                  </View>
+                ) : null}
+                {hotel.features.laundry ? (
+                  <View style={style.facility}>
+                    <Icon name="local-laundry-service" size={15} color={COLORS.grey} />
+                  </View>
+                ) : null}
+
+                {hotel.features.tv ? (
+                  <View style={style.facility}>
+                    <Icon name="tv" size={15} color={COLORS.grey} />
+                  </View>
+                ) : null}
+                {hotel.features.security ? (
+                  <View style={style.facility}>
+                    <Icon name="security" size={15} color={COLORS.grey} />
+                
+                  </View>
+                ) : null}
+
+              {/* <View style={{flexDirection: 'row'}}>
                 <Icon name="star" size={15} color={COLORS.orange} />
                 <Icon name="star" size={15} color={COLORS.orange} />
                 <Icon name="star" size={15} color={COLORS.orange} />
                 <Icon name="star" size={15} color={COLORS.orange} />
                 <Icon name="star" size={15} color={COLORS.grey} />
               </View>
-              <Text style={{fontSize: 10, color: COLORS.grey}}>365reviews</Text>
+              <Text style={{fontSize: 10, color: COLORS.grey}}>365reviews</Text> */}
             </View>
           </View>
         </Animated.View>
@@ -315,6 +355,17 @@ const style = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
   },
+  facility: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    // marginVertical: 5,
+  },
+  facilityText: {
+    fontSize: 10,
+    color: COLORS.grey,
+    marginLeft: 5,
+  },
+
   btn:{
     height: 55,
     justifyContent: 'center',

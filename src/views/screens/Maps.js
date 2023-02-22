@@ -21,18 +21,12 @@ export default function App({navigation}) {
   const getHostels = async () => {
     const hostelss = await Axios.get(`http://10.0.2.2:5000/get-hostels`);
     setHostels(hostelss.data.hostels);
-    // console.log(hostels[19]);
-
-    // setTempHostel(hostels[19]);
-    // console.log(tempHostel.location.coordinates[1]);
-    // console.log(tempHostel.location.coordinates[0]);
-    // console.log(tempHostel);
+    console.log(hostels[0].location.coordinates[0]);
+    console.log(hostels[0].location.coordinates[1]);
     let location1 = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Balanced,
     });
-  setLocation(location1);
-    console.log(location1.coords.latitude);
-    console.log(location1.coords.longitude);
+    setLocation(location1);
   }
 
   const getHostelsNearby = async () => {
@@ -105,21 +99,23 @@ export default function App({navigation}) {
          zoomEnabled={true}
       >
      
-          {/* <Marker
-            // key={index}
+      {hostels.map((hostel, index) => (
+
+          <Marker
             coordinate={{
-              latitude: tempHostel.location.coordinates[1],
-              longitude: tempHostel.location.coordinates[0],
+              latitude: hostel.location.coordinates[1],
+              longitude: hostel.location.coordinates[0],
             }}
 
-            title={tempHostel.name}
-            description={tempHostel.description}
+            title={hostel.name}
+            description={hostel.description}
 
           onPress={
-            () => navigation.navigate('DetailsScreen', tempHostel)
+            () => navigation.navigate('DetailsScreen', hostel)
           }
 
-          /> */}
+          />
+        ))}
 
       </MapView>
     </View>
