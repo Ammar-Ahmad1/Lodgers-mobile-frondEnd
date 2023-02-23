@@ -6,6 +6,7 @@ import {useNavigation} from '@react-navigation/native';
 import {usePaymentSheet} from '@stripe/stripe-react-native';
 import BookingDetails from "./BookingDetails";
 import Icon from 'react-native-vector-icons/Entypo';
+
 function MaterialCardWithImageAndTitle(props) {
   const booking = props.booking;
   const navigation = useNavigation();
@@ -38,9 +39,6 @@ function MaterialCardWithImageAndTitle(props) {
       ],
     );
   }
-
-
-
   return (
     <TouchableOpacity 
       onPress={()=>setShowModal(true)}
@@ -106,25 +104,6 @@ function MaterialCardWithImageAndTitle(props) {
       </View>
      
       }    
-    
-{/* 
-    <Modal visible={showModal} animationType="slide">
-      <View style={{backgroundColor:"white"}}
-      >
-        <Icon name="cross" size={30} style={{marginLeft: 20}} onPress={()=>{setShowModal(false)}}/>
-      </View>
-      <Text style={styles.header}>Booking Details</Text>
-      <View style={styles.container1}>    
-        <Image source={{ uri: booking.roomImage }} style={styles.image} />
-        <Text style={styles.description}> Booking ID: {booking._id}</Text>
-        <Text style={styles.title}>{booking.hostelName}</Text>
-        <Text style={styles.price}>Rs.{booking.price}/month</Text>
-        <Text style={styles.description}>{booking.message}</Text>
-        <Text style={styles.description}>{booking.status?"Booking Confirmed":"Booking Pending"}</Text>
-        <Text style={styles.description}>CheckIn Date: {booking.checkIn}</Text>
-        <Text style={styles.description}>ContactNo: {booking.contactNo}</Text>
-      </View>
-    </Modal> */}
     <Modal animationType="slide" transparent visible={showModal}>
       <View style={styles.modalContainer}>
         <View style={styles.contentContainer}>

@@ -33,13 +33,18 @@ import {
   
   const OwnerBooking = ({navigation, route} ) => {
     const id= route.params
+    const categories = ['All', 'Paid', 'Pending', 'Cancelled'];
+    const [selectedCategoryIndex, setSelectedCategoryIndex] = React.useState(0);
     const [bookings, setBookings] = React.useState([])
+    const [checkBooking, setCheckBooking] = React.useState([])
+
     const [refreshing, setRefreshing] = React.useState(false);
     const [searchText, setSearchText] = React.useState('')
     const getBookings = () => {
       Axios.get(`http://10.0.2.2:5000/get-bookings-by-owner/${id}`)
       .then(res => {
         console.log(res.data.booking)
+        setCheckBooking(res.data.booking)
         setBookings(res.data.booking)
       }
       )
@@ -65,11 +70,86 @@ import {
     React.useEffect(() => {
       getBookings()
     }, [])
-   
+    const CategoryList = ({navigation}) => {
+    
+      const updateListwithCategory = (index) => {
+        setSelectedCategoryIndex(index)
+        if(index === 0){
+          getBookings()
+        }
+  
+        if(index === 1){
+          const newData = checkBooking.filter((item) => {
+            const itemData=item.status 
+            const textData = true;
+            return itemData === textData;
+          });
+          setBookings(newData);
+        }
+        if(index === 2){
+          const newData = checkBooking.filter((item) => {
+            const itemData=item.status 
+            const textData = false;
+            return itemData === textData;
+          });
+          setBookings(newData);
+        }
+  
+  
+      }
+      return (
+        <View style={styles.categoryListContainer}>
+          {categories.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              activeOpacity={0.8}
+              onPress={()=>{updateListwithCategory(index)}}>
+              <View>
+                <Text
+                  style={{
+                    ...styles.categoryListText,
+                    color:
+                      selectedCategoryIndex == index
+                        ? COLORS.primary
+                        : COLORS.black,
+                  }}>
+                  {item}
+                </Text>
+                {selectedCategoryIndex == index && (
+                  <View
+                    style={{
+                      height: 3,
+                      width: 30,
+                      backgroundColor: COLORS.primary,
+                      marginTop: 2,
+                    }}
+                  />
+                )}
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+      );
+    };
     return (
-      <Background1>
-        <BackButton goBack={() => navigation.navigate('UserDashboard')} />
-          <ScrollView 
+      <View style={styles.container}>
+      <BackButton goBack={navigation.goBack}/>
+      <View style={styles.bookingsStack}>
+        <Text style={styles.bookings}>Bookings</Text>
+        <View style={styles.searchInputContainer}>
+          <Icon name="search" size={30} style={{marginLeft: 20}} />
+          <TextInput
+            placeholder="Search"
+            style={{fontSize: 20, paddingLeft: 10}}
+            onChangeText={(text) => SearchFilterFunction(text)}
+            value={searchText}
+          />
+        </View>
+      </View>
+      <CategoryList />
+          
+      
+        <ScrollView 
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{flexGrow: 1, justifyContent: 'space-between', paddingBottom: 20 , paddingHorizontal: 20}}
           refreshControl={
@@ -79,22 +159,7 @@ import {
             />
           }
           
-          >
-      
-        <View style={styles.container}>
-          <View style={styles.bookingsStack}>
-            <Text style={styles.bookings}>Bookings</Text>
-            <View style={styles.searchInputContainer}>
-              <Icon name="search" size={30} style={{marginLeft: 20}} />
-              <TextInput
-                placeholder="Search"
-                style={{fontSize: 20, paddingLeft: 10}}
-                onChangeText={(text) => SearchFilterFunction(text)}
-                value={searchText}
-              />
-            </View>
-          </View>
-        
+          >   
           {
             bookings.length === 0 ? (
               <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -113,9 +178,9 @@ import {
                 </MaterialCardWithImageAndTitle1>
               </View>        
             ))}
-          </View>
         </ScrollView>
-      </Background1>
+          </View>
+        
     );
   }
   
@@ -188,9 +253,10 @@ import {
     },
     searchInputContainer: {
       height: 50,
-      backgroundColor: COLORS.light,
+      width: 400,
+      backgroundColor: "lightgrey",
       marginTop: 35,
-      marginLeft: 0,
+      marginLeft: 6,
       borderTopLeftRadius: 15,
       borderBottomLeftRadius: 15,
       borderTopRightRadius: 15,
@@ -210,6 +276,16 @@ import {
       position: "absolute",
       left: 242,
       top: 135
+    },
+    categoryListContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginHorizontal: 20,
+      marginTop: 30,
+    },
+    categoryListText: {
+      fontSize: 17,
+      fontWeight: 'bold',
     },
   
   });
