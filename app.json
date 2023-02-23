@@ -20,7 +20,12 @@
           "urlScheme": "lodgers-mobile"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "08ef256a-0f86-4779-8ba7-d802e422357a"
+      }
+    }
   },
   "name": "lodgers-Mobile"
 }

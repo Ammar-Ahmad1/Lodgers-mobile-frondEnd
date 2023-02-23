@@ -1,5 +1,5 @@
 import React, { Component, useEffect,useState } from "react";
-import { StyleSheet, View, Text, Image, TouchableOpacity,Button,Alert } from "react-native";
+import { StyleSheet, View, Text, Image, TouchableOpacity,Button,Alert,Modal } from "react-native";
 import Axios from "axios";
 import { ScrollView } from "react-native-gesture-handler";
 import {useNavigation} from '@react-navigation/native';
@@ -9,6 +9,8 @@ import {usePaymentSheet} from '@stripe/stripe-react-native';
 function MaterialCardWithImageAndTitle1(props) {
   const booking = props.booking;
   const navigation = useNavigation();
+  const [showModal,setShowModal]=useState(false)
+
   const deleteBooking = (id) => {
     console.log(id)
     Axios.delete(`http://10.0.2.2:5000/delete-booking/${id}`)
@@ -66,9 +68,15 @@ function MaterialCardWithImageAndTitle1(props) {
 
 
   return (
+    <TouchableOpacity
+      onPress={()=>setShowModal(true)}
+    >
     <View style={[styles.container, props.style]}>
-      <View style={styles.cardBody}>
+    <View style={styles.cardBody}>
         <View style={styles.bodyContent}>
+          <Text style={styles.subtitleStyle}>
+            {"bookingId: " + booking._id}
+          </Text>
           <Text style={styles.titleStyle}>
             {props.titleStyle || "Title goes here"}
           </Text>
@@ -76,13 +84,14 @@ function MaterialCardWithImageAndTitle1(props) {
           <Text style={styles.subtitleStyle}>{booking.status?
           "Booking Confirmed":"Booking Pending"
           }</Text>
+          <Text style={styles.subtitleStyle}> {"Rs."+booking.price}</Text>
 
         </View>
         <Image
           source={{uri: booking.roomImage}}
           style={styles.cardItemImagePlace}
         ></Image>
-    </View>
+      </View>
 
           {
             !booking.status?
@@ -98,7 +107,15 @@ function MaterialCardWithImageAndTitle1(props) {
           }
             {
                 booking.paid?
-                    <View style={styles.btn}>
+                    <View style={{
+                      backgroundColor:"green",
+            marginTop:10,
+            height:35,
+            alignItems:"center",
+            justifyContent:"center",
+            width:100,
+            marginLeft:240
+                    }}>
                     <Button
                     title="Paid"
                     color="green"
@@ -114,34 +131,29 @@ function MaterialCardWithImageAndTitle1(props) {
                 </Button>
                     </View>
             }
-
-{/* 
-      {!booking.status||booking.paid? 
-      <View style={styles.btnn}>
-      <Button
-        title="Cancel"
-        color="red"
-        onPress={() => cancelBooking(booking._id)}
-      >
-      </Button>
+          <Modal animationType="slide" transparent visible={showModal}>
+      <View style={styles.modalContainer}>
+        <View style={styles.contentContainer}>
+        <Image source={{ uri: booking.roomImage }} style={styles.image} />
+        <Text style={styles.description}> Booking ID: {booking._id}</Text>
+        <Text style={styles.title}>{booking.hostelName}</Text>
+        <Text style={styles.price}>Rs.{booking.price}/month</Text>
+        <Text style={styles.description}>{booking.message}</Text>
+        <Text style={styles.description}>{booking.status?"Booking Confirmed":"Booking Pending"}</Text>
+        <Text style={styles.description}>
+          {booking.paid?"Payment Confirmed":"Waiting For Payment"}
+          </Text>
+        <Text style={styles.description}>CheckIn Date: {booking.checkIn}</Text>
+        <Text style={styles.description}>ContactNo: {booking.contactNo}</Text>
+          <TouchableOpacity onPress={()=>{setShowModal(false)}} style={styles.closeButton}>
+            <Text style={styles.closeButtonText}>Close</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      :<View style={styles.btn}>
-      <Button
-        title="Proceed to Payment"
-        color="#841584"
-        onPress={() => navigation.navigate('PaymentScreen',{booking:booking})}
-      >
-      </Button>
-      </View>
-      } */}
-
-{/*       
-        <View style={styles.btn}>
-        <Text style={{color:"green"}}>Paid</Text>
-        </View> */}
-      
+    </Modal>
       
     </View>
+    </TouchableOpacity>
   );
 }
 
@@ -151,7 +163,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: "#CCC",
     flexWrap: "nowrap",
-    backgroundColor: "grey",
+    backgroundColor: "lightgrey",
     shadowColor: "#000",
     shadowOffset: {
       width: -2,
@@ -181,16 +193,18 @@ const styles = StyleSheet.create({
     paddingBottom: 12
   },
   subtitleStyle: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#000",
-    lineHeight: 16,
+    lineHeight: 15,
     opacity: 0.5
   },
   cardItemImagePlace: {
     backgroundColor: "#ccc",
-    height: 100,
-    width: 100,
-    margin: 16,
+    height: 80,
+    width: 80,
+    marginTop: 50,
+    marginRight: 30
+
 
   },
   actionBody: {
@@ -221,7 +235,10 @@ const styles = StyleSheet.create({
   },
   btn:{
     backgroundColor: "red",
-    marginTop: 25,
+    marginTop: 10,
+    marginLeft: 120,
+    width:100,
+    alignContent: 'center',
 
   },
   container1: {
@@ -232,7 +249,51 @@ const styles = StyleSheet.create({
 },
 buttonContainer: {
     flex: 1,
-}
+},
+modalContainer: {
+  flex: 1,
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+contentContainer: {
+  backgroundColor: '#fff',
+  borderRadius: 10,
+  padding: 20,
+  width: '90%',
+},
+image: {
+  width: '100%',
+  height: 200,
+  marginBottom: 10,
+},
+title: {
+  fontSize: 24,
+  fontWeight: 'bold',
+  color: '#585858',
+  marginBottom: 5,
+},
+price: {
+  fontSize: 20,
+  color: '#00C48C',
+  marginBottom: 5,
+},
+description: {
+  fontSize: 18,
+  textAlign: 'center',
+  color: '#585858',
+  marginBottom: 10,
+},
+closeButton: {
+  backgroundColor: '#00C48C',
+  borderRadius: 5,
+  padding: 10,
+  alignItems: 'center',
+},
+closeButtonText: {
+  color: '#fff',
+  fontSize: 16,
+},
 });
 
 export default MaterialCardWithImageAndTitle1;
