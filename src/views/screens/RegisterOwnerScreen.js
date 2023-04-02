@@ -1,5 +1,6 @@
 import React, { useState,useEffect } from 'react'
-import { View, StyleSheet, TouchableOpacity,Image,AsyncStorage} from 'react-native'
+import { View, StyleSheet, TouchableOpacity,Image} from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Text } from 'react-native-paper'
 import Background from '../../components/Background'
 import Logo from '../../components/Logo'

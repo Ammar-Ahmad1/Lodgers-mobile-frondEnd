@@ -22,6 +22,7 @@ import UserBooking from './src/views/screens/UserBooking';
 import HostelMarker from './src/views/screens/HostelMarker';
 import OwnerBooking from './src/views/screens/owner/OwnerBooking';
 import PaymentScreen from './src/views/screens/PaymentScreen';
+import Bot from './src/views/screens/Bot';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {StripeProvider} from '@stripe/stripe-react-native';
 
@@ -55,6 +56,7 @@ const App = () => {
         <Stack.Screen name="HostelMarker" component={HostelMarker} />
         <Stack.Screen name="OwnerBooking" component={OwnerBooking} />
         <Stack.Screen name="PaymentScreen" component={PaymentScreen} />
+        <Stack.Screen name="Bot" component={Bot} />
       </Stack.Navigator>
     </NavigationContainer>
     </StripeProvider>

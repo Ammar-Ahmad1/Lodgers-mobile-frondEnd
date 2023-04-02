@@ -10,13 +10,13 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
-  AsyncStorage,
   Modal,
   TextInput,
   FlatList,
   LogBox,
 
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Background1 from '../../components/Background1'
 import COLORS from '../../consts/colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';

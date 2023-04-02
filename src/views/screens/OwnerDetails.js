@@ -9,10 +9,10 @@ import {
   Animated,
   Dimensions,
   TouchableOpacity,
-  Image,
-  AsyncStorage
+  Image
 
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Button from '../../components/Button';
 import COLORS from '../../consts/colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';

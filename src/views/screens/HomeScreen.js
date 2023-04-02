@@ -13,15 +13,16 @@ import {
   View,
   Image,
   Animated,
-  AsyncStorage,
   Modal
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import EIcon from 'react-native-vector-icons/EvilIcons';
 import EnIcon from 'react-native-vector-icons/Entypo';
 import COLORS from '../../consts/colors';
 import WifiIcon from 'react-native-vector-icons/FontAwesome';
 import { CheckBox } from 'react-native-elements';
+import ChatBot from "../../components/ChatBot";
 
 // import hotels from '../../consts/hotels';
 //import {GET_HOTEL} from '../../graphql/queries/hotelQueries';
@@ -164,7 +165,7 @@ const HomeScreen = ({navigation}) => {
           <Animated.View style={{...style.cardOverLay, opacity}} />
           <View style={style.priceTag}>
             <Text
-              style={{color: COLORS.white, fontSize: 20, fontWeight: 'bold'}}>
+              style={{color: COLORS.white, fontSize: 15, fontWeight: 'bold'}}>
               ${hotel.price}
             </Text>
           </View>
@@ -425,6 +426,7 @@ const HomeScreen = ({navigation}) => {
         </View>
       </View>
     </Modal>
+          <Icon name="filter-list" size={30} style={{right: 10,left:10,position:'absolute'}}  onPress={()=>{navigation.navigate('Bot')}}/>
       </ScrollView>
     </SafeAreaView>
   );
