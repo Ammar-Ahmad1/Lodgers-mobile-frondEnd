@@ -13,8 +13,8 @@ import {
   View,
   Image,
   Animated,
-  AsyncStorage,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import EIcon from 'react-native-vector-icons/EvilIcons';
 import EnIcon from 'react-native-vector-icons/Entypo';

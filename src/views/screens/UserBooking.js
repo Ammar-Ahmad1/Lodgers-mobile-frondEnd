@@ -8,7 +8,6 @@ import { ImageBackground,
     Dimensions,
     TouchableOpacity,
     Image,
-    AsyncStorage,
     FlatList,
     TextInput,
     Alert,
@@ -19,6 +18,7 @@ import { ImageBackground,
     KeyboardAvoidingView,
     ActivityIndicator,
 } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Logo from '../../components/Logo'
 import Header from '../../components/Header'
 import DateTimePicker from '@react-native-community/datetimepicker';
