@@ -1,6 +1,6 @@
 import { Text, View, StyleSheet,Modal } from 'react-native'
 import React, { Component } from 'react'
-import ChatBoT from 'react-native-chatbot'
+// import ChatBoT from 'react-native-chatbot'
 
 const steps = [
     {
@@ -29,7 +29,7 @@ const steps = [
 const ChatBot = () => {
     return (
         <View style={styles.container}>
-            <ChatBoT steps={steps} />
+            {/* <ChatBoT steps={steps} /> */}
         </View>
     )
 }

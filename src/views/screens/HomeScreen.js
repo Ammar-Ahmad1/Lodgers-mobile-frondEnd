@@ -83,6 +83,9 @@ const HomeScreen = ({navigation}) => {
     });
     setHostel(hostelss.data.hostels);
     setTempHostel(hostelss.data.hostels);
+    //sort hostels by ratings
+    setHostel(hostelss.data.hostels.sort((a, b) => b.ratings - a.ratings));
+
    // console.log(hostel);
   };
 
@@ -426,7 +429,7 @@ const HomeScreen = ({navigation}) => {
         </View>
       </View>
     </Modal>
-          <Icon name="filter-list" size={30} style={{right: 10,left:10,position:'absolute'}}  onPress={()=>{navigation.navigate('Bot')}}/>
+          {/* <Icon name="filter-list" size={30} style={{right: 10,left:10,position:'absolute'}}  onPress={()=>{navigation.navigate('Bot')}}/> */}
       </ScrollView>
     </SafeAreaView>
   );
