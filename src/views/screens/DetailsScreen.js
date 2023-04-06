@@ -367,25 +367,28 @@ const ReviewCard = ({review,user1}) => {
         </View>
       
       <Modal visible={showReview} animationType="slide">
-        <Background1>
-        <View style={{ flex: 1 }}>
-            <View style={{ padding: 16, flexDirection: 'row', alignItems: 'center' }}>
-            <BackButton />
-        <Text style={{ marginLeft: 16, fontSize: 24 }}>Hostel Reviews</Text>
-      </View>
-      <TextInput
-        style={{ paddingHorizontal: 16, paddingVertical: 8 }}
-        placeholder="Search reviews"
-        // value={searchTerm}
-        // onChangeText={setSearchTerm}
-      />
+        {/* <Background1> */}
+        <View style={style.container}>
+        <Icon name="close" size={24} style={style.closeModalIcon} onPress={() => setShowReview(false)} />
+        <View style={style.bookingsStack}>
+          <Text style={style.bookings}>Reviews</Text>
+          <View style={style.searchInputContainer}>
+            <Icon name="search" size={30} style={{marginLeft: 20}} />
+            <TextInput
+              placeholder="Search"
+              style={{fontSize: 20, paddingLeft: 10}}
+              // onChangeText={(text) => SearchFilterFunction(text)}
+              // value={searchText}
+            />
+          </View>
+        </View>
       <FlatList
         data={reviews}
         keyExtractor={review => review._id.toString()}
         renderItem={({ item }) => <ReviewItem review={item} />}
       />
     </View>
-        </Background1>        
+        {/* </Background1>         */}
       </Modal>
     </View>
   </ScrollView>
@@ -394,11 +397,54 @@ const ReviewCard = ({review,user1}) => {
 };
 
 const style = StyleSheet.create({
+  closeModalIcon: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    zIndex: 1,
+  },
+  
   heading: {
     fontSize: 20,
     fontWeight: 'bold',
     marginTop: 20,
     marginLeft: 20,
+  },
+  container: {
+    flex: 1,
+    width: Dimensions.get('window').width,
+  },
+  bookings: {
+    top: 0,
+    position: "absolute",
+    fontSize: 60,
+    fontWeight: "bold",
+    color: "#121212",
+    lineHeight: 20,
+    left: 150,
+    width: 153,
+    height: 48,
+    fontSize: 20,
+    letterSpacing: 0
+  },
+  bookingsStack: {
+    width: 375,
+    height: 83,
+    marginTop: 56,
+    marginBottom: 10,
+  },
+  searchInputContainer: {
+    height: 50,
+    width: 400,
+    backgroundColor: "lightgrey",
+    marginTop: 35,
+    marginLeft: 6,
+    borderTopLeftRadius: 15,
+    borderBottomLeftRadius: 15,
+    borderTopRightRadius: 15,
+    borderBottomRightRadius: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   btn: {
     height: 55,

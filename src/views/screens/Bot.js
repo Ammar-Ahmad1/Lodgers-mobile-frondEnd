@@ -1,26 +1,28 @@
-import { View, Text,useColorScheme,SafeAreaView,StatusBar,Button,StyleSheet,ScrollView } from 'react-native'
+import { View, Text,useColorScheme,SafeAreaView,StatusBar,Button,StyleSheet,ScrollView, NativeModules } from 'react-native'
 import React from 'react'
 // import {  } from 'react-native-appearance';
-import RNKommunicateChat from 'react-native-kommunicate-chat';
+const Kommunicate = require('react-native-kommunicate-chat');
 
 const Bot = () => {
-    const isDarkMode = useColorScheme() === 'dark';
+
+  const isDarkMode = useColorScheme() === 'dark';
   const backgroundStyle = {
     backgroundColor: isDarkMode ? 'black' : 'white',
   };
+  const RNKommunicateChat = NativeModules.RNKommunicateChat;
+  if(RNKommunicateChat)
+  {
+    console.log("RNKommunicateChat initialized");
+  }else{
+    console.log("RNKommunicateChat not initialized");
+  }
   startConversation = () => {
     let conversationObject = {
-      'appId' : '193e93982bedb8a269b29c8bc21555b07' // The [APP_ID](https://dashboard.kommunicate.io/settings/install) obtained from kommunicate dashboard.
- }
- 
-  RNKommunicateChat.buildConversation(conversationObject, (response, responseMessage) => {
-         if(response == "Success") {
-             console.log("Conversation Successfully with id:" + responseMessage);
-         }
-       });
+      'appId' : '193e93982bedb8a269b29c8bc21555b07', // The [APP_ID](https://dashboard.kommunicate.io/settings/install) obtained from kommunicate dashboard.
+      'botIds' : ['lodgers-bot-wj3pf  '], // The botIds of the bots you want to assign to the conversation.
+    }
 
-
-
+    console.log(Kommunicate)
   }
   return (
     <SafeAreaView style={styles.con}>
