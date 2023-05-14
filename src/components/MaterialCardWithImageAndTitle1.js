@@ -97,7 +97,7 @@ function MaterialCardWithImageAndTitle1(props) {
             !booking.status?
                 <View style={styles.btn}>
                 <Button
-                    title="Confirm Booking"
+                    title="Confirm"
                     color="blue"
                     onPress={() => updateStatus(booking._id)}
                 >
@@ -125,7 +125,7 @@ function MaterialCardWithImageAndTitle1(props) {
                     :
                     <View style={styles.btn}>
                     <Button
-                        title="Waiting for Payment"
+                        title="Not Paid"
                         color="purple"
                 >
                 </Button>

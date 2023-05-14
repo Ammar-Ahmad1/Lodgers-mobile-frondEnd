@@ -94,9 +94,9 @@ function MaterialCardWithImageAndTitle(props) {
       >
       </Button>
       </View>
-      :<View style={styles.btn}>
+      :<View style={styles.btn1}>
       <Button
-        title="Proceed to Payment"
+        title="Pay Now"
         color="#841584"
         onPress={() => navigation.navigate('PaymentScreen',{booking:booking})}
       >
@@ -217,6 +217,13 @@ const styles = StyleSheet.create({
     width:100,
     alignContent: 'center',
 
+  },
+  btn1:{
+    backgroundColor: "#841584",
+    marginTop: 10,
+    marginLeft: 120,
+    width:100,
+    alignContent: 'center',
   },
   modalContainer: {
     flex: 1,
