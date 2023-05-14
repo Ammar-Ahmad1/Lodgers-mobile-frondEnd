@@ -178,10 +178,12 @@ const HomeScreen = ({navigation}) => {
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
               <View>
                 <Text style={{fontWeight: 'bold', fontSize: 15}}>
-                  {hotel.name}
+                  {hotel.name.length > 20?hotel.name.substring(0,20)+"...":hotel.name}
                 </Text>
                 <Text style={{color: COLORS.grey, fontSize: 11}}>
-                  {hotel.description}
+                  { 
+                  hotel.description.length > 50?hotel.description.substring(0,50)+"...":hotel.description
+                  }
                 </Text>
               </View>
               <Icon name="bookmark-border" size={26} color={COLORS.primary} />

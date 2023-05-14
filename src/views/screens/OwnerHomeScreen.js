@@ -132,7 +132,7 @@ useEffect(() => {
           <Animated.View style={{...style.cardOverLay, opacity}} />
           <View style={style.priceTag}>
             <Text
-              style={{color: COLORS.white, fontSize: 20, fontWeight: 'bold'}}>
+              style={{color: COLORS.white, fontSize: 15, fontWeight: 'bold'}}>
               ${hotel.price}
             </Text>
           </View>
@@ -145,7 +145,9 @@ useEffect(() => {
                   {hotel.name}
                 </Text>
                 <Text style={{color: COLORS.grey, fontSize: 11}}>
-                  {hotel.description}
+                  {//shorten hotel.description
+                  hotel.description.length > 50? hotel.description.substring(0, 50) + '...' : hotel.description
+                  }
                 </Text>
               </View>
               {/* <Icon name="three-dots-vertical" size={20} color={COLORS.grey} /> */}

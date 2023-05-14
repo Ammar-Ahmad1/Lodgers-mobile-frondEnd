@@ -44,7 +44,7 @@ const PaymentScreen = (props) => {
         console.log(error,"errorHelooo");
     } else if (paymentIntent) {
         console.log(paymentIntent);
-        Alert.alert('Success', 'Your payment was confirmed!');
+        Alert.alert('Success', 'Your payment was confirmed!', [ { text: 'OK', onPress: () => props.navigation.navigate('Home') } ]);
     } 
 
 
@@ -59,7 +59,7 @@ const PaymentScreen = (props) => {
       </View>
 
         <Text style={styles.label}>Enter Card Details</Text>   
-       <CardField
+       {/* <CardField
         onCardChange={(cardDetails) => {console.log(cardDetails),setCardDetails(cardDetails)}}
         postalCodeEnabled={false}
         placeholder={{
@@ -70,12 +70,36 @@ const PaymentScreen = (props) => {
             width: '100%',
             height: 50,
             marginVertical: 30,
+            backgroundColor:'white',
+            borderWidth:1,
+            color:'white',
+
+
+        }}
+        
+        /> */}
+
+        <CardField
+        onCardChange={(cardDetails) => {console.log(cardDetails),setCardDetails(cardDetails)}}
+        postalCodeEnabled={false}
+        placeholder={{
+            number: '4242 4242 4242 4242',
+            
+            }}
+        cardStyle={styles.card}
+        style={{
+            width: '100%',
+            height: 50,
+            marginVertical: 30,
+            backgroundColor:'white',
+            borderWidth:1,
+            color:'white',
+
 
         }}
         
         />
-
-      <TouchableOpacity style={styles.button} >
+          <TouchableOpacity style={styles.button} >
         <Button title="Pay" onPress={handlePayPress} disabled={loading} />
       </TouchableOpacity>
     </View>
@@ -134,12 +158,20 @@ const styles = StyleSheet.create({
   },
     card:{
         borderWidth:1,
-        color:'white',
+        color:'black',
         width:'100%',
-        height:50,
+        height:10,
         marginVertical:30,
         backgroundColor:'white'
-    }
+    },
+    container1: {
+      marginTop: 30,
+      marginBottom: 30,
+    },
+    cardFieldContainer: {
+      height: 50,
+      marginBottom: 20,
+    },
 
 });
 

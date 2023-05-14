@@ -152,7 +152,7 @@ const UserDashboard = ({navigation}) => {
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
               <View>
                 <Text style={{fontWeight: 'bold', fontSize: 17}}>
-                  {hotel.name}
+                  {hotel.name.length > 18? hotel.name.substring(0,20)+'...':hotel.name}
                 </Text>
                 <Text style={{color: COLORS.grey, fontSize: 12}}>
                   {hotel.city}

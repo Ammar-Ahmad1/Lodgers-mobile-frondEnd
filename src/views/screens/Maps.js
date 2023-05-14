@@ -21,43 +21,43 @@ export default function App({navigation}) {
   const getHostels = async () => {
     const hostelss = await Axios.get(`http://10.0.2.2:5000/get-hostels`);
     setHostels(hostelss.data.hostels);
-    console.log(hostels[0].location.coordinates[0]);
-    console.log(hostels[0].location.coordinates[1]);
+    // console.log(hostels[0].location.coordinates[0]);
+    // console.log(hostels[0].location.coordinates[1]);
     let location1 = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Balanced,
     });
     setLocation(location1);
   }
 
-  const getHostelsNearby = async () => {
-    try {
-        let API_KEY="AIzaSyBZ4tgjiSbdleu8pBD1xFAnNpaTscTkZTo";
-         let  location1= await Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.Balanced,
+  // const getHostelsNearby = async () => {
+  //   try {
+  //       let API_KEY="AIzaSyBZ4tgjiSbdleu8pBD1xFAnNpaTscTkZTo";
+  //        let  location1= await Location.getCurrentPositionAsync({
+  //           accuracy: Location.Accuracy.Balanced,
 
-          });
-          //setLocation(location1);
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location1.coords.latitude},${location1.coords.longitude}&radius=1000&type=point_of_interest&keyword=hotel&key=${API_KEY} `,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
+  //         });
+  //         //setLocation(location1);
+  //     const response = await fetch(
+  //       `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location1.coords.latitude},${location1.coords.longitude}&radius=1000&type=point_of_interest&keyword=hotel&key=${API_KEY} `,
+  //       {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
 
-          method: 'GET',
+  //         method: 'GET',
           
-        }
-      );
-      // console.log(response);
-      const data = await response.json();
-      console.log(data);
-      setHostels(data.results);
-      console.log(hostels);
-    } catch (error) {
-      console.log(error);
-    }
+  //       }
+  //     );
+  //     // console.log(response);
+  //     const data = await response.json();
+  //     console.log(data);
+  //     setHostels(data.results);
+  //     console.log(hostels);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
 
-  }
+  // }
   useEffect(() => {
     (async () => {
       
