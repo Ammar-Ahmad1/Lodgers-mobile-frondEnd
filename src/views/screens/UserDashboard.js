@@ -1,6 +1,6 @@
 import React,{useState, useEffect,useRef} from 'react';
 import Axios from "axios";
-
+import MapView, {Marker} from 'react-native-maps';
 import {
   Dimensions,
   FlatList,
@@ -13,6 +13,7 @@ import {
   View,
   Image,
   Animated,
+  Modal
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -20,6 +21,7 @@ import EIcon from 'react-native-vector-icons/EvilIcons';
 import EnIcon from 'react-native-vector-icons/Entypo';
 import WifiIcon from 'react-native-vector-icons/FontAwesome';
 import COLORS from '../../consts/colors';
+import {CheckBox} from 'react-native-elements';
 // import hotels from '../../consts/hotels';
 //import {GET_HOTEL} from '../../graphql/queries/hotelQueries';
 const {width} = Dimensions.get('screen');
@@ -31,6 +33,7 @@ const UserDashboard = ({navigation}) => {
 
   const categories = ['All', 'Popular', 'Top Rated', 'Featured', 'Luxury'];
   const [selectedCategoryIndex, setSelectedCategoryIndex] = React.useState(0);
+  const [showFilterModal,setShowFilterModal]=React.useState(false)
   const [activeCardIndex, setActiveCardIndex] = React.useState(0);
   const scrollX = React.useRef(new Animated.Value(0)).current;
   const [hostel, setHostel] = useState([]);
@@ -41,7 +44,13 @@ const UserDashboard = ({navigation}) => {
   const [food, setFood] = useState(false);
   const [laundry, setLaundry] = useState(false);
   const [tv, setTv] = useState(false);
-
+  const [filterWifi,setFilterWifi]=useState(false);
+  const [filterTv,setFilterTv]=useState(false);
+  const [filterSecurity,setFilterSecurity]=useState(false);
+  const [filterParking,setFilterParking]=useState(false);
+  const [filterLaundary,setFilterLaundary]=useState(false);
+  const [filterFood,setFilterFood]=useState(false);
+  const [tempHostel,setTempHostel]=useState([]);
 
   const HostelList = async () => {
     const hostelss = await Axios.get("http://10.0.2.2:5000/get-hostels", {
@@ -51,11 +60,6 @@ const UserDashboard = ({navigation}) => {
     });
     setHostel(hostelss.data.hostels);
    console.log(hostel);
-  };
-  const getFullList = () => {
-    setSearchText('');
-    HostelList();
-
   };
   const SearchFilterFunction = (text) => {
     const newData = hostel.filter(function (item) {
@@ -72,6 +76,11 @@ const UserDashboard = ({navigation}) => {
     if (text == '') {
       HostelList();
     }
+
+  };
+    const getFullList = () => {
+    setSearchText('');
+    HostelList();
 
   };
   useEffect(() => {
@@ -246,7 +255,44 @@ const UserDashboard = ({navigation}) => {
     );
   };
   const ref = useRef(null);
-  
+  const applySearchFilters = ()=>{
+   // filter hostel based on search filters and set the filtered hostel list in hostelList state
+    // then close the filter modal
+    //if modal is cleared then show all the hostel
+    if(!filterWifi && !filterParking && !filterFood && !filterLaundary && !filterTv && !filterSecurity){
+      HostelList();
+      setShowFilterModal(false);
+      return;
+    }
+
+    let filteredHostelList = hostel.filter((item)=>{
+      // filter by wifi, parking, food, laundry, tv, security
+      if(filterWifi && !item.features.wifi){
+        return false;
+      }
+      if(filterParking && !item.features.parking){
+        return false;
+      }
+      if(filterFood && !item.features.food){
+        return false;
+      }
+      if(filterLaundary && !item.features.laundry){
+        return false;
+      }
+      if(filterTv && !item.features.tv){
+        return false;
+      }
+      if(filterSecurity && !item.features.security){
+        return false;
+      }
+      return true;
+    })
+      // save the filtered hostel list in hostelList state
+      setHostel(filteredHostelList);
+    setShowFilterModal(false);
+
+  }
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
       <View style={style.header}>
@@ -276,8 +322,8 @@ const UserDashboard = ({navigation}) => {
             onChangeText={(text) => SearchFilterFunction(text)}
           />
           <EnIcon name="cross" size={20} style={{right: 90,position:'absolute'}} onPress={getFullList} />
-          <Icon name="filter-list" size={30} style={{right: 55,position:'absolute'}} />
-          <EIcon name="location"  size={32} style={{
+          <Icon name="filter-list" size={30} style={{right: 55,position:'absolute'}} onPress={()=>setShowFilterModal(true)} />
+          <Icon name="my-location"  size={30} style={{
             //move to right side
             position: 'absolute',
             right: 20,
@@ -334,6 +380,46 @@ const UserDashboard = ({navigation}) => {
           }}
           renderItem={({item}) => <TopHotelCard hotel={item} />}
         />
+        <Modal animationType="slide" transparent visible={showFilterModal}>
+      <View style={style.modalContainer}>
+        <View style={style.contentContainer}>
+          <Text style={style.title}>Filters</Text>
+          <CheckBox
+            title="WiFi"
+            checked={filterWifi}
+            onPress={() => {setFilterWifi(!filterWifi)}}
+          />
+          <CheckBox
+            title="Security"
+            checked={filterSecurity}
+            onPress={() => {setFilterSecurity(!filterSecurity)}}
+          />
+          <CheckBox
+            title="TV"
+            checked={filterTv}
+            onPress={() => setFilterTv(!filterTv)}
+          />
+          <CheckBox
+            title="Parking"
+            checked={filterParking}
+            onPress={() => setFilterParking(!filterParking)}
+          />
+          <CheckBox
+            title="Laundry"
+            checked={filterLaundary}
+            onPress={() => setFilterLaundary(!filterLaundary)}
+          />
+          <CheckBox
+            title="Food"
+            checked={filterFood}
+            onPress={() => setFilterFood(!filterFood)}
+          />
+          <TouchableOpacity onPress={applySearchFilters} style={style.closeButton}>
+            <Text style={style.closeButtonText}>Apply Filters</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
           <View style={style.btn}>
           <Text style={{color: COLORS.white, fontSize: 18, fontWeight: 'bold'}}
           //on press booking
@@ -451,6 +537,34 @@ const style = StyleSheet.create({
     width: '100%',
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
+  },
+    modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  contentContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    width: '90%',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#585858',
+    marginBottom: 10,
+  },
+  closeButton: {
+    backgroundColor: '#00C48C',
+    borderRadius: 5,
+    padding: 10,
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 
