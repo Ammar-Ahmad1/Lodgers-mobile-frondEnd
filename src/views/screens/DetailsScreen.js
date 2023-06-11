@@ -1,4 +1,4 @@
-import React,{useEffect,useState} from 'react';
+import React, { useEffect, useState } from "react";
 import {
   ImageBackground,
   ScrollView,
@@ -14,217 +14,221 @@ import {
   TextInput,
   FlatList,
   LogBox,
-
-} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Background1 from '../../components/Background1'
-import COLORS from '../../consts/colors';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import EIcon from 'react-native-vector-icons/Entypo';
-import Axios from 'axios';
-import ArrowIcon from 'react-native-vector-icons/AntDesign';
-import ReviewItem from '../../components/ReviewItem';
-import BackButton from '../../components/BackButton';
-const {width} = Dimensions.get('screen');
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Background1 from "../../components/Background1";
+import COLORS from "../../consts/colors";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import EIcon from "react-native-vector-icons/Entypo";
+import Axios from "axios";
+import ArrowIcon from "react-native-vector-icons/AntDesign";
+import ReviewItem from "../../components/ReviewItem";
+import BackButton from "../../components/BackButton";
+const { width } = Dimensions.get("screen");
 const cardWidth = width / 1.8;
-const DetailsScreen = ({navigation, route}) => {
+const DetailsScreen = ({ navigation, route }) => {
   const item = route.params;
-const [rooms,setRooms] = useState([ ])
-const scrollX = React.useRef(new Animated.Value(0)).current;
-const [selectedCategoryIndex, setSelectedCategoryIndex] = React.useState(0);
-const [activeCardIndex, setActiveCardIndex] = React.useState(0);
-const [modalVisible, setModalVisible] = useState(false);
-const [showReview, setShowReview] = useState(false);
-const [review, setReview] = useState('');
-const [reviews, setReviews] = useState([]);
-const [user, setUser] = useState(null);
-const [reviewUser, setReviewUser] = useState([]);
-// const booking = () => {
-//   AsyncStorage.getItem('user').then((user) => {
-//     if (user) {
-//       navigation.navigate('Home', {item});
-//     } else {
-//       navigation.navigate('LoginScreen');
-//     }
-//   });
-// };
-const getReviews = async () => {
-  const reviews = await Axios.get(`http://10.0.2.2:5000/get-reviews/${item._id}`);
-  setReviews(reviews.data.reviews);
-  // console.log(reviews.data);
-  //get users 
+  const [rooms, setRooms] = useState([]);
+  const scrollX = React.useRef(new Animated.Value(0)).current;
+  const [selectedCategoryIndex, setSelectedCategoryIndex] = React.useState(0);
+  const [activeCardIndex, setActiveCardIndex] = React.useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [showReview, setShowReview] = useState(false);
+  const [review, setReview] = useState("");
+  const [reviews, setReviews] = useState([]);
+  const [user, setUser] = useState(null);
+  const [reviewUser, setReviewUser] = useState([]);
+  // const booking = () => {
+  //   AsyncStorage.getItem('user').then((user) => {
+  //     if (user) {
+  //       navigation.navigate('Home', {item});
+  //     } else {
+  //       navigation.navigate('LoginScreen');
+  //     }
+  //   });
+  // };
+  const getReviews = async () => {
+    const reviews = await Axios.get(
+      `http://10.0.2.2:5000/get-reviews/${item._id}`
+    );
+    setReviews(reviews.data.reviews);
+    // console.log(reviews.data);
+    //get users
+  };
+  const getUserById = async (id) => {
+    console.log("getting user with id", id);
+    fetch(`http://10.0.2.2:5000/get-user/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data, "data");
+        setReviewUser(data.user);
+      })
+      .catch((err) => console.log(err));
 
-};
-const getUserById = async (id) => {
-  console.log("getting user with id", id)
-  fetch(`http://10.0.2.2:5000/get-user/${id}`)
-  .then(res => res.json())
-  .then(data => {
-    console.log(data, "data")
-    setReviewUser(data.user)
-  })
-  .catch(err => console.log(err))
-
-
-  // const user = await Axios.get(`http://10.0.2.2:5000/get-user/${id}`);
-  // setReviewUser(user.data.user);
-  // console.log(user.user,"hello")
-  // // console.log
-};
-const addReview = () => {
-  AsyncStorage.getItem('user').then((user) => {
-    let id=JSON.parse(user)._id
-    let name=JSON.parse(user).name
-    let email=JSON.parse(user).email
-    if (user) {
-      Axios.post('http://10.0.2.2:5000/add-review', {
-        review,
-        hostel: item._id,
-        user: id,
-        name:name,
-        email:email
-      }).then((res) => {
-        // console.log(res.data);
-        setModalVisible(false);
-        setReview('');
-      });
-    } else {
-      navigation.navigate('LoginScreen');
-    }
-  });
-};
-
-
-
-const roomList = async () => {
-  const roommss = await Axios.get(`http://10.0.2.2:5000/get-rooms/${item._id}`, {
-  });
-  setRooms(roommss.data.room);
-  // console.log(rooms);
-};
-useEffect(() => {
-  roomList();
-  getReviews();
-  AsyncStorage.getItem('user').then((user) => {
-    setUser(JSON.parse(user));
-  });
-  LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
-
-}, []);
-const Card = ({hotel, index}) => {
-  const inputRange = [
-    (index - 1) * cardWidth,
-    index * cardWidth,
-    (index + 1) * cardWidth,
-  ];
-  const opacity = scrollX.interpolate({
-    inputRange,
-    outputRange: [0.7, 0, 0.7],
-  });
-  const scale = scrollX.interpolate({
-    inputRange,
-    outputRange: [0.8, 1, 0.8],
-  });
-  const bookHostel = () => {
-    AsyncStorage.getItem('user').then((user) => {
+    // const user = await Axios.get(`http://10.0.2.2:5000/get-user/${id}`);
+    // setReviewUser(user.data.user);
+    // console.log(user.user,"hello")
+    // // console.log
+  };
+  const addReview = () => {
+    AsyncStorage.getItem("user").then((user) => {
+      let id = JSON.parse(user)._id;
+      let name = JSON.parse(user).name;
+      let email = JSON.parse(user).email;
       if (user) {
-        navigation.navigate('UserBooking', {item,hotel});
+        Axios.post("http://10.0.2.2:5000/add-review", {
+          review,
+          hostel: item._id,
+          user: id,
+          name: name,
+          email: email,
+        }).then((res) => {
+          // console.log(res.data);
+          setModalVisible(false);
+          setReview("");
+        });
       } else {
-        navigation.navigate('LoginScreen');
+        navigation.navigate("LoginScreen");
       }
     });
   };
 
-  return (
-    <TouchableOpacity
-      disabled={activeCardIndex != index}
-      activeOpacity={1}
-      onPress={bookHostel}
-     // onPress={() => navigation.navigate('DetailsScreen', hotel)}
-     >
-      <Animated.View style={{...style.card, transform: [{scale}]}}>
-        <Animated.View style={{...style.cardOverLay, opacity}} />
-        <View style={style.priceTag}>
-          <Text
-            style={{color: COLORS.white, fontSize: 20, fontWeight: 'bold'}}>
-            ${hotel.roomPrice}
-          </Text>
-        </View>
-        <Image source={{uri:hotel.roomImage}} style={style.cardImage} />
-        <View style={style.cardDetails}>
-          <View
-            style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <View>
-              <Text style={{fontWeight: 'bold', fontSize: 15}}>
-                {hotel.roomType}
-              </Text>
-              <Text style={{color: COLORS.grey, fontSize: 11}}>
-                {hotel.roomDescription}
-              </Text>
-            </View>
-            <Icon name="bookmark-border" size={26} color={COLORS.primary} />
+  const roomList = async () => {
+    const roommss = await Axios.get(
+      `http://10.0.2.2:5000/get-rooms/${item._id}`,
+      {}
+    );
+    setRooms(roommss.data.room);
+    // console.log(rooms);
+  };
+  useEffect(() => {
+    roomList();
+    getReviews();
+    AsyncStorage.getItem("user").then((user) => {
+      setUser(JSON.parse(user));
+    });
+    LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
+  }, []);
+  const Card = ({ hotel, index }) => {
+    const inputRange = [
+      (index - 1) * cardWidth,
+      index * cardWidth,
+      (index + 1) * cardWidth,
+    ];
+    const opacity = scrollX.interpolate({
+      inputRange,
+      outputRange: [0.7, 0, 0.7],
+    });
+    const scale = scrollX.interpolate({
+      inputRange,
+      outputRange: [0.8, 1, 0.8],
+    });
+    const bookHostel = () => {
+      AsyncStorage.getItem("user").then((user) => {
+        if (user) {
+          navigation.navigate("UserBooking", { item, hotel });
+        } else {
+          navigation.navigate("LoginScreen");
+        }
+      });
+    };
+
+    return (
+      <TouchableOpacity
+        disabled={activeCardIndex != index}
+        activeOpacity={1}
+        onPress={bookHostel}
+        // onPress={() => navigation.navigate('DetailsScreen', hotel)}
+      >
+        <Animated.View style={{ ...style.card, transform: [{ scale }] }}>
+          <Animated.View style={{ ...style.cardOverLay, opacity }} />
+          <View style={style.priceTag}>
+            <Text
+              style={{ color: COLORS.white, fontSize: 15, fontWeight: "bold" }}
+            >
+              ${hotel.roomPrice}
+            </Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: 10,
-            }}>
-            <View style={{flexDirection: 'row'}}>
-              <Icon name="star" size={15} color={COLORS.orange} />
-              <Icon name="star" size={15} color={COLORS.orange} />
-              <Icon name="star" size={15} color={COLORS.orange} />
-              <Icon name="star" size={15} color={COLORS.orange} />
-              <Icon name="star" size={15} color={COLORS.grey} />
+          <Image source={{ uri: hotel.roomImage }} style={style.cardImage} />
+          <View style={style.cardDetails}>
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <View>
+                <Text style={{ fontWeight: "bold", fontSize: 15 }}>
+                  {hotel.roomType}
+                </Text>
+                <Text style={{ color: COLORS.grey, fontSize: 11 }}>
+                  {hotel.roomDescription}
+                </Text>
+              </View>
+              <Icon name="bookmark-border" size={26} color={COLORS.primary} />
             </View>
-            <Text style={{fontSize: 14, color: COLORS.grey}}>{hotel.roomStatus}</Text>
-            <ArrowIcon name="arrowright" size={20} color={COLORS.grey} />
-          {/* <EIcon name="dots-three-vertical" size={20} color={COLORS.grey} onPress={booking()}/> */}
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginTop: 10,
+              }}
+            >
+              <View style={{ flexDirection: "row" }}>
+                <Icon name="star" size={15} color={COLORS.orange} />
+                <Icon name="star" size={15} color={COLORS.orange} />
+                <Icon name="star" size={15} color={COLORS.orange} />
+                <Icon name="star" size={15} color={COLORS.orange} />
+                <Icon name="star" size={15} color={COLORS.grey} />
+              </View>
+              <Text style={{ fontSize: 14, color: COLORS.grey }}>
+                {hotel.roomStatus}
+              </Text>
+              <ArrowIcon name="arrowright" size={20} color={COLORS.grey} />
+              {/* <EIcon name="dots-three-vertical" size={20} color={COLORS.grey} onPress={booking()}/> */}
+            </View>
           </View>
-        </View>
-      </Animated.View>
-     
-    </TouchableOpacity>
-  );
-};
-const openModal = () => {
-  AsyncStorage.getItem('user').then((user) => {
-    if (user) {
-      setModalVisible(true);
-    } else {
-      navigation.navigate('LoginScreen');
-    }
-  });
-};
-const ReviewCard = ({review,user1}) => {
-  // console.log(review)
-  // console.log(user1,"USEERRR!111")
-  return (
-    <ScrollView>
-    <View style={style.reviewCard}>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        {/* <Image
+        </Animated.View>
+      </TouchableOpacity>
+    );
+  };
+  const openModal = () => {
+    AsyncStorage.getItem("user").then((user) => {
+      if (user) {
+        setModalVisible(true);
+      } else {
+        navigation.navigate("LoginScreen");
+      }
+    });
+  };
+  const ReviewCard = ({ review, user1 }) => {
+    // console.log(review)
+    // console.log(user1,"USEERRR!111")
+    return (
+      <ScrollView>
+        <View style={style.reviewCard}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            {/* <Image
           source={{uri:review.user.image}}
           style={{width: 50, height: 50, borderRadius: 25}}
         /> */}
-        <View style={{marginLeft: 10}}>
-          <Text style={{fontWeight: 'bold', fontSize: 15}}>
-            {review.name}
-          </Text>
-          <Text style={{color: COLORS.grey, fontSize: 12}}>
-            {review.email}
-          </Text>
+            <View style={{ marginLeft: 10 }}>
+              <Text style={{ fontWeight: "bold", fontSize: 15 }}>
+                {review.name}
+              </Text>
+              <Text style={{ color: COLORS.grey, fontSize: 12 }}>
+                {review.email}
+              </Text>
+            </View>
+          </View>
+          <View style={{ marginTop: 10 }}>
+            <Text
+              style={{ color: COLORS.grey, fontSize: 15, fontWeight: "bold" }}
+            >
+              {review.review}
+            </Text>
+          </View>
         </View>
-      </View>
-      <View style={{marginTop: 10}}>
-        <Text style={{color: COLORS.grey, fontSize: 15, fontWeight: 'bold'}}>
-          {review.review}
-        </Text>
-      </View>
-    </View>
-    </ScrollView>
-  );
-};
+      </ScrollView>
+    );
+  };
 
   return (
     <ScrollView
@@ -232,13 +236,14 @@ const ReviewCard = ({review,user1}) => {
       contentContainerStyle={{
         backgroundColor: COLORS.white,
         paddingBottom: 20,
-      }}>
+      }}
+    >
       <StatusBar
         barStyle="light-content"
         translucent
         backgroundColor="rgba(0,0,0,0)"
       />
-      <ImageBackground style={style.headerImage} source={{uri:item.image}}>
+      <ImageBackground style={style.headerImage} source={{ uri: item.image }}>
         <View style={style.header}>
           <Icon
             name="arrow-back-ios"
@@ -246,60 +251,72 @@ const ReviewCard = ({review,user1}) => {
             color={COLORS.white}
             onPress={navigation.goBack}
           />
-          <Icon name="rate-review" size={28} color={COLORS.white} onPress={()=>setShowReview(true)}/>
+          <Icon
+            name="rate-review"
+            size={28}
+            color={COLORS.white}
+            onPress={() => setShowReview(true)}
+          />
         </View>
       </ImageBackground>
       <View>
         <View style={style.iconContainer}>
-          <Icon name="place" color={COLORS.white} size={28} onPress={()=> navigation.navigate('HostelMarker',item)} />
+          <Icon
+            name="place"
+            color={COLORS.white}
+            size={28}
+            onPress={() => navigation.navigate("HostelMarker", item)}
+          />
         </View>
-        <View style={{marginTop: 20, paddingHorizontal: 20}}>
-          <Text style={{fontSize: 20, fontWeight: 'bold'}}>{item.name}</Text>
+        <View style={{ marginTop: 20, paddingHorizontal: 20 }}>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>{item.name}</Text>
           <Text
             style={{
               fontSize: 12,
-              fontWeight: '400',
+              fontWeight: "400",
               color: COLORS.grey,
               marginTop: 5,
-            }}>
+            }}
+          >
             {/* {item.location.coordinates[0]}:{item.location.coordinates[1]} */}
           </Text>
           <View
             style={{
               marginTop: 10,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <View style={{flexDirection: 'row'}}>
-              <View style={{flexDirection: 'row'}}>
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            <View style={{ flexDirection: "row" }}>
+              <View style={{ flexDirection: "row" }}>
                 <Icon name="star" size={20} color={COLORS.orange} />
                 <Icon name="star" size={20} color={COLORS.orange} />
                 <Icon name="star" size={20} color={COLORS.orange} />
                 <Icon name="star" size={20} color={COLORS.orange} />
                 <Icon name="star" size={20} color={COLORS.grey} />
               </View>
-              <Text style={{fontWeight: 'bold', fontSize: 18, marginLeft: 5}}>
+              <Text style={{ fontWeight: "bold", fontSize: 18, marginLeft: 5 }}>
                 4.0
               </Text>
             </View>
-            <Text style={{fontSize: 13, color: COLORS.grey}}>365reviews</Text>
+            <Text style={{ fontSize: 13, color: COLORS.grey }}>365reviews</Text>
           </View>
-          <View style={{marginTop: 20}}>
-            <Text style={{lineHeight: 20, color: COLORS.grey}}>
+          <View style={{ marginTop: 20 }}>
+            <Text style={{ lineHeight: 20, color: COLORS.grey }}>
               {item.description}
             </Text>
           </View>
-          </View>
-          <View>
+        </View>
+        <View>
           <Animated.FlatList
             onMomentumScrollEnd={(e) => {
               setActiveCardIndex(
-                Math.round(e.nativeEvent.contentOffset.x / cardWidth),
+                Math.round(e.nativeEvent.contentOffset.x / cardWidth)
               );
             }}
             onScroll={Animated.event(
-              [{nativeEvent: {contentOffset: {x: scrollX}}}],
-              {useNativeDriver: true},
+              [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+              { useNativeDriver: true }
             )}
             horizontal
             data={rooms}
@@ -309,110 +326,102 @@ const ReviewCard = ({review,user1}) => {
               paddingRight: cardWidth / 2 - 40,
             }}
             showsHorizontalScrollIndicator={true}
-            renderItem={({item, index}) => <Card hotel={item} index={index} />}
+            renderItem={({ item, index }) => (
+              <Card hotel={item} index={index} />
+            )}
             snapToInterval={cardWidth}
           />
         </View>
         <View style={style.btn}>
-          <Text style={{color: COLORS.white, fontSize: 18, fontWeight: 'bold'}}
-          //on press booking
-          onPress={openModal}
+          <Text
+            style={{ color: COLORS.white, fontSize: 18, fontWeight: "bold" }}
+            //on press booking
+            onPress={openModal}
           >
-
             Leave Review
           </Text>
-          <Modal visible={modalVisible} animationType="slide">
+          <Modal visible={modalVisible} animationType="slide" transparent>
+            <View style={style.modalContain}>
             <View style={style.modalContent}>
               <Icon
                 name="close"
                 size={24}
-                style={{...style.modalToggle, ...style.modalClose}}
+                style={{ ...style.modalToggle, ...style.modalClose }}
                 onPress={() => setModalVisible(false)}
               />
-              <Text style={{fontSize: 20, fontWeight: 'bold'}}>Review</Text>
-              <Text style={{fontSize: 14, color: COLORS.grey}}>
+              <Text style={style.modalTitle}>Review</Text>
+              <Text style={style.modalSubtitle}>
                 Leave a review for this hostel
               </Text>
-              <View style={{marginTop: 20}}>
-                <Text style={{fontSize: 14, color: COLORS.grey}}>
-                  Your review
-                </Text>
+              <View style={style.inputContainer}>
+                <Text style={style.label}>Your review</Text>
                 <TextInput
-                  style={{
-                    height: 100,
-                    borderWidth: 1,
-                    borderColor: COLORS.grey,
-                    borderRadius: 10,
-                    marginTop: 10,
-                    padding: 10,
-                  }}
+                  style={style.input}
                   multiline
                   numberOfLines={4}
                   placeholder="Write your review here"
                   onChangeText={(val) => setReview(val)}
                 />
-
               </View>
-              {/* submit */}
-              <TouchableOpacity style={style.btn}>
-                <Text style={{color: COLORS.white, fontSize: 18, fontWeight: 'bold'}}
-                onPress={addReview}
-                >
-                  Submit
-                </Text>
+              <TouchableOpacity style={style.button} onPress={addReview}>
+                <Text style={style.buttonText}>Submit</Text>
               </TouchableOpacity>
-
+              </View>
             </View>
-          </Modal>          
+          </Modal>
         </View>
-      
-      <Modal visible={showReview} animationType="slide">
-        {/* <Background1> */}
-        <View style={style.container}>
-        <Icon name="close" size={24} style={style.closeModalIcon} onPress={() => setShowReview(false)} />
-        <View style={style.bookingsStack}>
-          <Text style={style.bookings}>Reviews</Text>
-          <View style={style.searchInputContainer}>
-            <Icon name="search" size={30} style={{marginLeft: 20}} />
-            <TextInput
-              placeholder="Search"
-              style={{fontSize: 20, paddingLeft: 10}}
-              // onChangeText={(text) => SearchFilterFunction(text)}
-              // value={searchText}
+
+        <Modal visible={showReview} animationType="slide">
+          {/* <Background1> */}
+          <View style={style.container}>
+            <Icon
+              name="close"
+              size={24}
+              style={style.closeModalIcon}
+              onPress={() => setShowReview(false)}
+            />
+            <View style={style.bookingsStack}>
+              <Text style={style.bookings}>Reviews</Text>
+              <View style={style.searchInputContainer}>
+                <Icon name="search" size={30} style={{ marginLeft: 20 }} />
+                <TextInput
+                  placeholder="Search"
+                  style={{ fontSize: 20, paddingLeft: 10 }}
+                  // onChangeText={(text) => SearchFilterFunction(text)}
+                  // value={searchText}
+                />
+              </View>
+            </View>
+            <FlatList
+              data={reviews}
+              keyExtractor={(review) => review._id.toString()}
+              renderItem={({ item }) => <ReviewItem review={item} />}
             />
           </View>
-        </View>
-      <FlatList
-        data={reviews}
-        keyExtractor={review => review._id.toString()}
-        renderItem={({ item }) => <ReviewItem review={item} />}
-      />
-    </View>
-        {/* </Background1>         */}
-      </Modal>
-    </View>
-  </ScrollView>
-    
+          {/* </Background1>         */}
+        </Modal>
+      </View>
+    </ScrollView>
   );
 };
 
 const style = StyleSheet.create({
   closeModalIcon: {
-    position: 'absolute',
+    position: "absolute",
     top: 20,
     right: 20,
     zIndex: 1,
   },
-  
+
   heading: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginTop: 20,
     marginLeft: 20,
   },
   container: {
     flex: 1,
-    width: Dimensions.get('window').width,
+    width: Dimensions.get("window").width,
   },
   bookings: {
     top: 0,
@@ -425,7 +434,7 @@ const style = StyleSheet.create({
     width: 153,
     height: 48,
     fontSize: 20,
-    letterSpacing: 0
+    letterSpacing: 0,
   },
   bookingsStack: {
     width: 375,
@@ -443,13 +452,13 @@ const style = StyleSheet.create({
     borderBottomLeftRadius: 15,
     borderTopRightRadius: 15,
     borderBottomRightRadius: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   btn: {
     height: 55,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 40,
     backgroundColor: COLORS.primary,
     marginHorizontal: 20,
@@ -459,49 +468,48 @@ const style = StyleSheet.create({
     height: 150,
     width: 2000,
     // backgroundColor: COLORS.white,
-    backgroundColor: 'skyblue',
-    borderRadius: 20  ,
+    backgroundColor: "skyblue",
+    borderRadius: 20,
     padding: 20,
     marginTop: 20,
     marginRight: 20,
     elevation: 5,
-
   },
 
   priceTag: {
     height: 40,
-    alignItems: 'center',
+    alignItems: "center",
     marginLeft: 40,
     paddingLeft: 20,
     flex: 1,
     backgroundColor: COLORS.secondary,
     borderTopLeftRadius: 20,
     borderBottomLeftRadius: 20,
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   iconContainer: {
-    position: 'absolute',
+    position: "absolute",
     height: 60,
     width: 60,
     backgroundColor: COLORS.primary,
     top: -30,
     right: 20,
     borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   headerImage: {
     height: 400,
     borderBottomRightRadius: 40,
     borderBottomLeftRadius: 40,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   header: {
     marginTop: 60,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginHorizontal: 20,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
   card: {
     height: 300,
@@ -513,7 +521,7 @@ const style = StyleSheet.create({
   },
   cardImage: {
     height: 200,
-    width: '100%',
+    width: "100%",
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
   },
@@ -521,30 +529,89 @@ const style = StyleSheet.create({
     height: 40,
     width: 60,
     backgroundColor: COLORS.primary,
-    position: 'absolute',
+    position: "absolute",
     zIndex: 1,
     right: 0,
     borderTopRightRadius: 15,
     borderBottomLeftRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   cardDetails: {
     height: 100,
     borderRadius: 18,
     backgroundColor: COLORS.white,
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     padding: 20,
-    width: '100%',
+    width: "100%",
   },
   cardOverLay: {
     height: 280,
     backgroundColor: COLORS.white,
-    position: 'absolute',
+    position: "absolute",
     zIndex: 100,
     width: cardWidth,
     borderRadius: 15,
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: COLORS.white,
+    padding: 20,
+    borderRadius: 10,
+  },
+  modalContain: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalToggle: {
+    alignSelf: "flex-end",
+    marginTop: 20,
+    marginRight: 10,
+    color: COLORS.grey,
+  },
+  modalClose: {
+    color: COLORS.grey,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 10,
+    alignSelf: "center",
+  },
+  modalSubtitle: {
+    fontSize: 14,
+    color: COLORS.dark,
+    marginTop: 10,
+  },
+  inputContainer: {
+    marginTop: 20,
+  },
+  label: {
+    fontSize: 14,
+    color: COLORS.dark,
+  },
+  input: {
+    height: 100,
+    borderWidth: 1,
+    borderColor: COLORS.grey,
+    borderRadius: 10,
+    marginTop: 10,
+    padding: 10,
+  },
+  button: {
+    backgroundColor: COLORS.primary,
+    padding: 10,
+    borderRadius: 10,
+    alignSelf: "center",
+    marginTop: 20,
+  },
+  buttonText: {
+    color: COLORS.white,
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
 

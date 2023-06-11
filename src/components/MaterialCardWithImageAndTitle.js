@@ -6,7 +6,7 @@ import {useNavigation} from '@react-navigation/native';
 import {usePaymentSheet} from '@stripe/stripe-react-native';
 import BookingDetails from "./BookingDetails";
 import Icon from 'react-native-vector-icons/Entypo';
-
+import COLORS from "../consts/colors";
 function MaterialCardWithImageAndTitle(props) {
   const booking = props.booking;
   const navigation = useNavigation();
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: "#CCC",
     // flexWrap: "nowrap",
-    backgroundColor: "lightgrey",
+    backgroundColor: COLORS.secondary,
     shadowColor: "#000",
     shadowOffset: {
       width: -2,
